@@ -1,0 +1,58 @@
+cmake_minimum_required(VERSION 3.13)
+include_guard()
+include(ExternalProject)
+
+# we are in sanitized extprj build
+if(DEFINED SANITIZE_ADDRESS AND DEFINED SANITIZE_THREAD AND DEFINED SANITIZE_UNDEFINED)
+	if(NOT (${SANITIZE_ADDRESS} OR ${SANITIZE_THREAD} OR ${SANITIZE_UNDEFINED}))
+		message(FATAL_ERROR "Erorr in sanitizer processing, CMake will exit.")
+	endif()
+	
+	find_package(Sanitizers REQUIRED)
+	add_sanitizers(${PROJECT_NAME})
+	add_sanitizers(${PROJECT_NAME}_tests)
+else() # we are in usual build
+	string(TOUPPER ${PROJECT_NAME} ${PROJECT_NAME}_uppercased)
+	
+	ExternalProject_Add(${PROJECT_NAME}_SANITIZE_ADDRESS
+		SOURCE_DIR ${PROJECT_SOURCE_DIR}
+		CMAKE_ARGS 	-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+					-DSANITIZE_ADDRESS=ON
+					-DSANITIZE_THREAD=OFF
+					-DSANITIZE_UNDEFINED=OFF
+					-D${${PROJECT_NAME}_uppercased}_STATIC_ANALYSIS=OFF
+					-D${${PROJECT_NAME}_uppercased}_BUILD_TESTS=ON
+					-D${${PROJECT_NAME}_uppercased}_SANITIZED_TESTS=ON
+		INSTALL_COMMAND ""
+		TEST_COMMAND "ctest;--VV;--output-on-failure"
+	)
+
+	ExternalProject_Add(${PROJECT_NAME}_SANITIZE_THREAD
+		SOURCE_DIR ${PROJECT_SOURCE_DIR}
+		CMAKE_ARGS -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+					-DSANITIZE_ADDRESS=OFF
+					-DSANITIZE_THREAD=ON
+					-DSANITIZE_UNDEFINED=OFF
+					-D${${PROJECT_NAME}_uppercased}_STATIC_ANALYSIS=OFF
+					-D${${PROJECT_NAME}_uppercased}_BUILD_TESTS=ON
+					-D${${PROJECT_NAME}_uppercased}_SANITIZED_TESTS=ON
+		INSTALL_COMMAND ""
+		TEST_COMMAND "ctest;--VV;--output-on-failure"
+	)
+	
+	ExternalProject_Add(${PROJECT_NAME}_SANITIZE_UNDEFINED
+		SOURCE_DIR ${PROJECT_SOURCE_DIR}
+		CMAKE_ARGS -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+					-DSANITIZE_ADDRESS=OFF
+					-DSANITIZE_THREAD=OFF
+					-DSANITIZE_UNDEFINED=ON
+					-D${${PROJECT_NAME}_uppercased}_STATIC_ANALYSIS=OFF
+					-D${${PROJECT_NAME}_uppercased}_BUILD_TESTS=ON
+					-D${${PROJECT_NAME}_uppercased}_SANITIZED_TESTS=ON
+		INSTALL_COMMAND ""
+		TEST_COMMAND "ctest;--VV;--output-on-failure"
+	)
+	
+	ExternalProject_Add_StepDependencies(${PROJECT_NAME}_SANITIZE_THREAD configure ${PROJECT_NAME}_SANITIZE_ADDRESS)
+	ExternalProject_Add_StepDependencies(${PROJECT_NAME}_SANITIZE_UNDEFINED configure ${PROJECT_NAME}_SANITIZE_THREAD)
+endif()
