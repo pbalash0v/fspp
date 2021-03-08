@@ -9,43 +9,9 @@
 
 namespace
 {
-	void print_SWITCH_GLOBAL_dirs()
-	{
-		// struct switch_directories {
-		// 	char *base_dir;
-		// 	char *mod_dir;
-		// 	char *conf_dir;
-		// 	char *log_dir;
-		// 	char *run_dir;
-		// 	char *db_dir;
-		// 	char *script_dir;
-		// 	char *temp_dir;
-		// 	char *htdocs_dir;
-		// 	char *grammar_dir;
-		// 	char *storage_dir;
-		// 	char *cache_dir;
-		// 	char *recordings_dir;
-		// 	char *sounds_dir;
-		// 	char *lib_dir;
-		// 	char *certs_dir;
-		// 	char *fonts_dir;
-		// 	char *images_dir;
-		// 	char *data_dir;
-		// 	char *localstate_dir;
-		// };
-		// typedef struct switch_directories switch_directories;
-		// SWITCH_DECLARE_DATA extern switch_directories SWITCH_GLOBAL_dirs;
 
-		std::cerr << "SWITCH_GLOBAL_dirs.base_dir: " << SWITCH_GLOBAL_dirs.base_dir << "\n";
-		std::cerr << "SWITCH_GLOBAL_dirs.mod_dir: " << SWITCH_GLOBAL_dirs.mod_dir << "\n";
-		std::cerr << "SWITCH_GLOBAL_dirs.conf_dir: " << SWITCH_GLOBAL_dirs.conf_dir << "\n";
-		std::cerr << "SWITCH_GLOBAL_dirs.log_dir: " << SWITCH_GLOBAL_dirs.log_dir << "\n";
-		std::cerr << "SWITCH_GLOBAL_dirs.run_dir: " << SWITCH_GLOBAL_dirs.run_dir << "\n";
-		std::cerr << "SWITCH_GLOBAL_dirs.lib_dir: " << SWITCH_GLOBAL_dirs.lib_dir << "\n";	
-		std::cerr << "SWITCH_GLOBAL_dirs.temp_dir: " << SWITCH_GLOBAL_dirs.temp_dir << "\n";
-	}
 
-}
+} //anon namespace
 
 namespace fspp
 {
@@ -55,15 +21,13 @@ lib::lib()
 	std::cerr << "m_cur_dir: " << m_cur_dir << "\n";
 	std::cerr << "m_run_dir: " << m_run_dir << "\n";
 
-	//std::cerr << "SWITCH_GLOBAL_dirs: " << SWITCH_GLOBAL_dirs.base_dir << "\n";
-
-	// load internal SWITCH_GLOBAL_dirs struct of char* with autoconf generated values (?)
+	// loads internal SWITCH_GLOBAL_dirs struct of char* with autoconf generated values (?)
     switch_core_set_globals();
 
 	std::cerr << "Initial SWITCH_GLOBAL_dirs\n";
     print_SWITCH_GLOBAL_dirs();
 
-	//init_SWITCH_GLOBAL_dirs();
+	init_SWITCH_GLOBAL_dirs();
 
 	std::cerr << "fspp initialized SWITCH_GLOBAL_dirs\n";
     print_SWITCH_GLOBAL_dirs();
@@ -107,5 +71,40 @@ void lib::init_SWITCH_GLOBAL_dirs()
 	SWITCH_GLOBAL_dirs.db_dir = m_fs_cfg.temp_dir.data();
 }
 
+void lib::print_SWITCH_GLOBAL_dirs()
+{
+	// struct switch_directories {
+	// 	char *base_dir;
+	// 	char *mod_dir;
+	// 	char *conf_dir;
+	// 	char *log_dir;
+	// 	char *run_dir;
+	// 	char *db_dir;
+	// 	char *script_dir;
+	// 	char *temp_dir;
+	// 	char *htdocs_dir;
+	// 	char *grammar_dir;
+	// 	char *storage_dir;
+	// 	char *cache_dir;
+	// 	char *recordings_dir;
+	// 	char *sounds_dir;
+	// 	char *lib_dir;
+	// 	char *certs_dir;
+	// 	char *fonts_dir;
+	// 	char *images_dir;
+	// 	char *data_dir;
+	// 	char *localstate_dir;
+	// };
+	// typedef struct switch_directories switch_directories;
+	// SWITCH_DECLARE_DATA extern switch_directories SWITCH_GLOBAL_dirs;
+
+	std::cerr << "SWITCH_GLOBAL_dirs.base_dir: " << SWITCH_GLOBAL_dirs.base_dir << "\n";
+	std::cerr << "SWITCH_GLOBAL_dirs.mod_dir: " << SWITCH_GLOBAL_dirs.mod_dir << "\n";
+	std::cerr << "SWITCH_GLOBAL_dirs.conf_dir: " << SWITCH_GLOBAL_dirs.conf_dir << "\n";
+	std::cerr << "SWITCH_GLOBAL_dirs.log_dir: " << SWITCH_GLOBAL_dirs.log_dir << "\n";
+	std::cerr << "SWITCH_GLOBAL_dirs.run_dir: " << SWITCH_GLOBAL_dirs.run_dir << "\n";
+	std::cerr << "SWITCH_GLOBAL_dirs.lib_dir: " << SWITCH_GLOBAL_dirs.lib_dir << "\n";	
+	std::cerr << "SWITCH_GLOBAL_dirs.temp_dir: " << SWITCH_GLOBAL_dirs.temp_dir << "\n";
+}
 
 } // namespace fspp

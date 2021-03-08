@@ -30,6 +30,7 @@ private:
 
 private:
 	void init_SWITCH_GLOBAL_dirs();
+	void print_SWITCH_GLOBAL_dirs();
 };
 
 } // namespace fspp

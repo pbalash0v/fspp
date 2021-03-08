@@ -22,8 +22,17 @@ constexpr auto* fspp_dir {"fspp"};
 
 namespace fspp
 {
+
 inline void generate_fs_config(const std::filesystem::path& cfg_file_path)
 {
+	auto name_value_pt = [](auto name, auto val)
+	{
+		bpt::ptree param_pt;
+		param_pt.add("<xmlattr>.name", name);
+		param_pt.add("<xmlattr>.value", val);
+		return param_pt;
+	};
+
 	bpt::ptree pt;
 	auto& document = pt.put("document", "");
 	pt.put("document.<xmlattr>.type", "freeswitch/xml");
@@ -34,18 +43,52 @@ inline void generate_fs_config(const std::filesystem::path& cfg_file_path)
 	auto& conf_section = document.add_child("section", configuration_pt);
 
 	//--- configuration -> modules
-	bpt::ptree modules_pt;
-	modules_pt.add("<xmlattr>.name", "modules.conf");
-	auto& modules_conf = conf_section.add_child("configuration", modules_pt);
+	auto modules = [](auto& parent_pt)
+	{
+		bpt::ptree modules_pt;
+		modules_pt.add("<xmlattr>.name", "modules.conf");
+		auto& modules_conf = parent_pt.add_child("configuration", modules_pt);
 
-	auto& modules = modules_conf.put("modules", "");
-	bpt::ptree mod_console_pt;
-	mod_console_pt.add("<xmlattr>.module", "mod_console");
-	modules.add_child("load", mod_console_pt);
-	bpt::ptree mod_logfile_pt;
-	mod_logfile_pt.add("<xmlattr>.module", "mod_logfile");
-	modules.add_child("load", mod_logfile_pt);
+		auto& modules = modules_conf.put("modules", "");
+		bpt::ptree mod_console_pt;
+		mod_console_pt.add("<xmlattr>.module", "mod_console");
+		modules.add_child("load", mod_console_pt);
+		bpt::ptree mod_logfile_pt;
+		mod_logfile_pt.add("<xmlattr>.module", "mod_logfile");
+		modules.add_child("load", mod_logfile_pt);
 
+		return modules_pt;
+	}(conf_section);
+
+	//--- configuration -> console
+	auto console = [&name_value_pt](auto& parent_pt)
+	{
+		bpt::ptree console_pt;
+		console_pt.add("<xmlattr>.name", "console.conf");
+		auto& console_conf = parent_pt.add_child("configuration", console_pt);
+
+		auto& mappings = console_conf.put("mappings", "");
+		mappings.add_child("map", name_value_pt("all", "console,debug,info,notice,warning,err,crit,alert"));
+
+		auto& settings = console_conf.put("settings", "");
+		settings.add_child("param", name_value_pt("colorize", "true"));
+		settings.add_child("param", name_value_pt("loglevel", "debug"));
+
+		return console_pt;
+	}(conf_section);
+
+	//--- configuration -> logfile
+	auto logfile = [&name_value_pt](auto& parent_pt)
+	{
+		bpt::ptree logfile_pt;
+		logfile_pt.add("<xmlattr>.name", "logfile.conf");
+		auto& logfile_conf = parent_pt.add_child("configuration", logfile_pt);
+
+		auto& settings = logfile_conf.put("settings", "");
+		settings.add_child("param", name_value_pt("rotate-on-hup", "true"));
+
+		return logfile_pt;
+	}(conf_section);
 
 
 	//--- dialplan
@@ -53,21 +96,8 @@ inline void generate_fs_config(const std::filesystem::path& cfg_file_path)
 	dialplan_pt.add("<xmlattr>.name", "dialplan");
 	document.add_child("section", dialplan_pt);
 
-
+	//--- write to file
 	bpt::xml_parser::write_xml(cfg_file_path.string(), pt, std::locale(), bpt::xml_writer_make_settings<std::string>(' ', 2));
-}
-
-inline void read_fs_config(const std::filesystem::path& cfg_file_path)
-{
-	bpt::ptree pt;
-	bpt::xml_parser::read_xml(cfg_file_path.string(), pt);
-	auto val = pt.get<std::string>("document.<xmlattr>.type");
-	std::cerr << val << '\n';	
-	// if (auto it = pt.find("document"); it.to_iterator() != pt.end())
-	// {
-	// 	auto val = boost::lexical_cast<std::string>(it->second.data());
-	// 	std::cerr << val << '\n';
-	// }
 }
 
 
@@ -77,8 +107,6 @@ public:
 	fs_cfg()
 	{
 		fs::create_directory(fspp_conf_path);
-		//auto temp_dir = fs::temp_directory_path();
-		//auto freeswitch_xml_path = temp_dir / freeswitch_xml;
 		generate_fs_config(freeswitch_xml_path);
 	}
 	fs_cfg(const fs_cfg&) = delete;
