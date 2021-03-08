@@ -22,11 +22,6 @@ endif()
 
 add_subdirectory(src)
 
-if (FSPP_BUILD_EXAMPLES)
-	add_subdirectory(app)
-endif()
-
-
 if(FSPP_BUILD_TESTS)
 	include(pull_Catch2)
 	enable_testing()
