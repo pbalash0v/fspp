@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION ${FSPP_CMAKE_VERSION})
 include_guard()
 
 find_package(fmt QUIET)
@@ -7,7 +7,7 @@ if(NOT fmt_FOUND)
 	message(STATUS "Standby, pulling fmt...")
 	FetchContent_Declare(fmt
 		GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-		GIT_TAG        6.2.1
+		GIT_TAG        7.1.3
 		GIT_PROGRESS ON
 	)
 	FetchContent_MakeAvailable(fmt)

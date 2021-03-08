@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 include_guard()
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
@@ -23,6 +23,7 @@ message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 ###########################################
 # Anything global and common to all targets
 ###########################################
+set(FSPP_CMAKE_VERSION "3.16")
 find_package(Boost 1.74.0 REQUIRED COMPONENTS program_options system filesystem)
 find_package(Filesystem REQUIRED)
 include(ExternalProject)

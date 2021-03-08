@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION ${FSPP_CMAKE_VERSION})
+include_guard()
+
 #################################
 # Find deps
 #################################
