@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 
 project(fspp
 	VERSION 0.1.0
@@ -13,8 +13,8 @@ option(FSPP_BUILD_EXAMPLES "Build example apps" OFF)
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(SetupBuild)
-
 include(pull_FreeSWITCH)
+include(pull_fmt)
 
 if(FSPP_STATIC_ANALYSIS)
 	include(StaticAnalyzers)

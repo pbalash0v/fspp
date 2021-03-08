@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.13)
 
 #################################
+# Find deps
+#################################
+
+#################################
 # Define targets
 #################################
 add_library(${PROJECT_NAME})
@@ -23,5 +27,14 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE
 	Boost::boost
+	$<BUILD_INTERFACE:fmt::fmt-header-only>	
 	PkgConfig::freeswitch
+	${CMAKE_DL_LIBS}
+)
+target_compile_definitions(${PROJECT_NAME} PUBLIC BOOST_DLL_USE_STD_FS)
+target_link_libraries(${PROJECT_NAME} PUBLIC
+	std::filesystem
+)
+target_include_directories(${PROJECT_NAME} PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )

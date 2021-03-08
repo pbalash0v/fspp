@@ -20,7 +20,10 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
 endif()
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
-#################################
-# Find global deps
-#################################
-find_package(Boost 1.74.0 REQUIRED)
+###########################################
+# Anything global and common to all targets
+###########################################
+find_package(Boost 1.74.0 REQUIRED COMPONENTS program_options system filesystem)
+find_package(Filesystem REQUIRED)
+include(ExternalProject)
+include(FetchContent)
