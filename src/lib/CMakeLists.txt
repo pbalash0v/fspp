@@ -12,6 +12,7 @@ add_library(FSPP::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME} PRIVATE
 	${PROJECT_NAME}.cpp
+	${PROJECT_NAME}_impl.cpp
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES
 	CXX_STANDARD 17
