@@ -1,0 +1,12 @@
+include $(top_srcdir)/build/modmake.rulesam
+MODNAME=mod_console
+
+noinst_LTLIBRARIES = libmod_console.la
+libmod_console_la_SOURCES   =  mod_console.c
+libmod_console_la_LDFLAGS   = -static
+libmod_console_la_CFLAGS  = $(AM_CFLAGS)
+
+#mod_LTLIBRARIES = mod_console.la
+#mod_console_la_SOURCES  = 
+#mod_console_la_LIBADD   = $(switch_builddir)/libfreeswitch.la libmod_console.la
+#mod_console_la_LDFLAGS  = -avoid-version -module -no-undefined -shared

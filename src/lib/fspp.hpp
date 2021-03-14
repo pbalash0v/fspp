@@ -6,6 +6,7 @@
 #include <boost/process.hpp>
 
 #include "fs_cfg.hpp"
+#include "fs_modules.hpp"
 
 
 namespace fspp
@@ -13,7 +14,6 @@ namespace fspp
 class lib final
 {
 public:
-
 	lib();
 	~lib();
 	lib(const lib&) = delete;
@@ -24,6 +24,7 @@ public:
 	void operator()();
 
 private:
+	fs_modules _;
 	std::string m_run_dir {boost::dll::program_location().parent_path().string()};
 	std::string m_cur_dir {std::filesystem::current_path().string()};
 	fs_cfg m_fs_cfg;

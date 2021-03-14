@@ -7,31 +7,22 @@
 #include "fspp.hpp"
 #include "fs_cfg.hpp"
 
-namespace
-{
-
-
-} //anon namespace
 
 namespace fspp
 {
 
 lib::lib()
 {
-	std::cerr << "m_cur_dir: " << m_cur_dir << "\n";
-	std::cerr << "m_run_dir: " << m_run_dir << "\n";
-
 	// loads internal SWITCH_GLOBAL_dirs struct of char* with autoconf generated values (?)
     switch_core_set_globals();
 
 	std::cerr << "Initial SWITCH_GLOBAL_dirs\n";
     print_SWITCH_GLOBAL_dirs();
-
 	init_SWITCH_GLOBAL_dirs();
-
 	std::cerr << "fspp initialized SWITCH_GLOBAL_dirs\n";
     print_SWITCH_GLOBAL_dirs();
 
+    //
     switch_core_flag_t flags {SCF_USE_SQL};
 	bool console {true};
     const char* err {nullptr};
@@ -62,7 +53,10 @@ void lib::operator()()
 void lib::init_SWITCH_GLOBAL_dirs()
 {
 	SWITCH_GLOBAL_dirs.base_dir	= m_fs_cfg.base_dir.data();
-	//SWITCH_GLOBAL_dirs.mod_dir = m_fs_cfg.mod_dir.data();
+
+	SWITCH_GLOBAL_dirs.mod_dir = m_fs_cfg.mod_dir.data();
+	//SWITCH_GLOBAL_dirs.mod_dir = nullptr;
+
 	SWITCH_GLOBAL_dirs.conf_dir = m_fs_cfg.conf_dir.data();
 	SWITCH_GLOBAL_dirs.log_dir = m_fs_cfg.log_dir.data();
 	SWITCH_GLOBAL_dirs.run_dir = m_fs_cfg.run_dir.data();

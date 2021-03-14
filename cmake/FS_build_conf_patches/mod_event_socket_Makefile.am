@@ -1,0 +1,12 @@
+include $(top_srcdir)/build/modmake.rulesam
+MODNAME=mod_event_socket
+
+noinst_LTLIBRARIES = libmod_event_socket.la
+libmod_event_socket_la_SOURCES   =  mod_event_socket.c
+libmod_event_socket_la_LDFLAGS   = -static
+libmod_event_socket_la_CFLAGS  = $(AM_CFLAGS)
+
+#mod_LTLIBRARIES = mod_event_socket.la
+#mod_event_socket_la_SOURCES  =
+#mod_event_socket_la_LIBADD   = $(switch_builddir)/libfreeswitch.la libmod_event_socket.la
+#mod_event_socket_la_LDFLAGS  = -avoid-version -module -no-undefined -shared

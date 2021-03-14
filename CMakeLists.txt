@@ -8,7 +8,7 @@ project(fspp
 option(FSPP_BUILD_TESTS "Build tests" OFF)
 option(FSPP_SANITIZED_TESTS "Build sanitized tests" OFF)
 option(FSPP_STATIC_ANALYSIS "Use static analyzers" OFF)
-option(FSPP_BUILD_EXAMPLES "Build example apps" OFF)
+option(FSPP_BUILD_EXAMPLES "Build example apps" ON)
 
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 

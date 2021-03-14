@@ -16,13 +16,14 @@ set_target_properties(app PROPERTIES
 	CXX_STANDARD 17
 	CXX_STANDARD_REQUIRED ON
 	CXX_EXTENSIONS OFF
+	ENABLE_EXPORTS ON
 )
 target_link_libraries(app PRIVATE
 	Boost::boost
 	FSPP::fspp
 )
 
-
+if(OFF)
 ########## TEMPORARY
 add_executable(pg)
 target_sources(pg PRIVATE
@@ -41,4 +42,4 @@ target_link_libraries(pg PRIVATE
 	${CMAKE_DL_LIBS}
 	FSPP::fspp	
 )
-
+endif()
