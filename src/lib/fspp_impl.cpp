@@ -1,5 +1,5 @@
 #include <iostream>
-#include <boost/exception/diagnostic_information.hpp>
+#include <boost/throw_exception.hpp>
 
 #include <switch.h>
 
@@ -8,59 +8,106 @@
 #include "fs_cfg.hpp"
 
 
+
+namespace
+{
+
+auto on_xml_search = [](const char* section, const char* /*tag_name*/, const char* key_name, const char* key_value
+	, switch_event_t* , void* user_data) -> switch_xml_t
+{
+	auto* self = static_cast<fspp::lib_impl*>(user_data);
+
+	// std::cerr << "--on_xml_search--" << '\n';
+	// std::cerr << "section: " << section << '\n';
+	// std::cerr << "tag_name: " << tag_name << '\n';
+	// std::cerr << "key_name: " << key_name << '\n';
+	// std::cerr << "key_value: " << key_value << '\n';
+	// std::cerr << "----" << '\n';
+
+	if (auto xml_str = self->cfg()({section, key_name, key_value}); xml_str)
+	{
+		return switch_xml_parse_str_dup(xml_str->data());
+	}
+	else
+	{
+		return nullptr;
+	}
+};
+
+}
+
+
 namespace fspp
 {
 
 lib_impl::lib_impl()
 {
 	// loads internal SWITCH_GLOBAL_dirs struct of char* with autoconf generated values (?)
-    switch_core_set_globals();
+    ::switch_core_set_globals();
 
 	// std::cerr << "Initial SWITCH_GLOBAL_dirs\n";
 	// print_SWITCH_GLOBAL_dirs();
 	init_SWITCH_GLOBAL_dirs();
-	// std::cerr << "fspp initialized SWITCH_GLOBAL_dirs\n";
-	// print_SWITCH_GLOBAL_dirs();
+	//std::cerr << "fspp initialized SWITCH_GLOBAL_dirs\n";
+	//print_SWITCH_GLOBAL_dirs();
 
     //
     switch_core_flag_t flags {SCF_USE_SQL};
 	bool console {true};
     const char* err {nullptr};
-	   
-   	if (auto res = switch_core_init_and_modload(flags, console ? SWITCH_TRUE : SWITCH_FALSE, &err); res != SWITCH_STATUS_SUCCESS)
+
+	if (auto res = ::switch_core_init(flags, console ? SWITCH_TRUE : SWITCH_FALSE, &err); res != SWITCH_STATUS_SUCCESS)
+	{
+		BOOST_THROW_EXCEPTION(std::runtime_error{static_cast<const char*>(err)});
+	}
+
+	::switch_xml_bind_search_function(on_xml_search, SWITCH_XML_SECTION_CONFIG, this);
+
+   	if (auto res = ::switch_core_init_and_modload(flags, console ? SWITCH_TRUE : SWITCH_FALSE, &err); res != SWITCH_STATUS_SUCCESS)
    	{
-   		BOOST_THROW_EXCEPTION(std::runtime_error{err});
+   		BOOST_THROW_EXCEPTION(std::runtime_error{static_cast<const char*>(err)});
    	}
 }
 
 lib_impl::~lib_impl()
 {
-	[[maybe_unused]] auto destroy_status = switch_core_destroy();
+	[[maybe_unused]] auto destroy_status = ::switch_core_destroy();
 	BOOST_ASSERT(destroy_status == SWITCH_STATUS_SUCCESS);
 }
 
 void lib_impl::operator()()
 {
-    print_SWITCH_GLOBAL_dirs();
+    //print_SWITCH_GLOBAL_dirs();
 
     // blocks here in console or stdout
-	switch_core_runtime_loop(false);
+	::switch_core_runtime_loop(false);
     //print_SWITCH_GLOBAL_dirs();
 }
 
 
 void lib_impl::init_SWITCH_GLOBAL_dirs()
 {
-	SWITCH_GLOBAL_dirs.base_dir	= m_fs_cfg.base_dir.data();
-	SWITCH_GLOBAL_dirs.mod_dir = m_fs_cfg.mod_dir.data();
-	//SWITCH_GLOBAL_dirs.mod_dir = nullptr;
+	auto dup_c_str = [](const std::string& str, auto*& dest)
+	{
+		switch_safe_free(dest);
 
-	SWITCH_GLOBAL_dirs.conf_dir = m_fs_cfg.conf_dir.data();
-	SWITCH_GLOBAL_dirs.log_dir = m_fs_cfg.log_dir.data();
-	SWITCH_GLOBAL_dirs.run_dir = m_fs_cfg.run_dir.data();
-	SWITCH_GLOBAL_dirs.lib_dir = m_fs_cfg.lib_dir.data();
-	SWITCH_GLOBAL_dirs.temp_dir = m_fs_cfg.temp_dir.data();
-	SWITCH_GLOBAL_dirs.db_dir = m_fs_cfg.temp_dir.data();
+		char* res = strdup(str.c_str());
+		if (not res)
+		{
+			BOOST_THROW_EXCEPTION(std::runtime_error{"strdup failed"});
+		}
+
+		dest = res;
+	};
+
+	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.base_dir);
+	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.mod_dir);
+	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.conf_dir);
+	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.log_dir);
+	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.run_dir);
+	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.lib_dir);
+	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.temp_dir);
+	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.db_dir);	
 }
 
 void lib_impl::print_SWITCH_GLOBAL_dirs()
@@ -97,6 +144,9 @@ void lib_impl::print_SWITCH_GLOBAL_dirs()
 	std::cerr << "SWITCH_GLOBAL_dirs.run_dir: " << SWITCH_GLOBAL_dirs.run_dir << "\n";
 	std::cerr << "SWITCH_GLOBAL_dirs.lib_dir: " << SWITCH_GLOBAL_dirs.lib_dir << "\n";	
 	std::cerr << "SWITCH_GLOBAL_dirs.temp_dir: " << SWITCH_GLOBAL_dirs.temp_dir << "\n";
+	std::cerr << "----\n";
+	std::cerr << "SWITCH_GLOBAL_filenames.conf_name: " << SWITCH_GLOBAL_filenames.conf_name << "\n";
+	std::cerr << "----\n";
 }
 
 } // namespace fspp

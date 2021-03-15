@@ -25,11 +25,13 @@ public:
 
 	void operator()();
 
+	const fs_cfg& cfg() const noexcept { return m_fs_cfg; };
+
 private:
 	fs_modules _;
-	std::string m_run_dir {boost::dll::program_location().parent_path().string()};
-	std::string m_cur_dir {std::filesystem::current_path().string()};
-	fs_cfg m_fs_cfg;
+	fs_cfg m_fs_cfg;	
+	// std::string m_run_dir {boost::dll::program_location().parent_path().string()};
+	// std::string m_cur_dir {std::filesystem::current_path().string()};
 
 private:
 	void init_SWITCH_GLOBAL_dirs();

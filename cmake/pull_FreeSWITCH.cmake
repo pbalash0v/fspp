@@ -29,7 +29,7 @@ ExternalProject_Add(spandsp
 	GIT_SHALLOW ON
 	GIT_PROGRESS ON
 
-	CONFIGURE_COMMAND cd <SOURCE_DIR> && ./bootstrap.sh && ./configure --prefix=${BUILD_ARTIFACTS_DIR}
+	CONFIGURE_COMMAND cd <SOURCE_DIR> && ./bootstrap.sh && ./configure ${AUTOTOOLS_FLAGS} --prefix=${BUILD_ARTIFACTS_DIR}
 	BUILD_COMMAND cd <SOURCE_DIR> && make
 	INSTALL_COMMAND cd <SOURCE_DIR> && make install
 	UPDATE_COMMAND ""
@@ -42,7 +42,7 @@ ExternalProject_Add(sofia_sip
 	GIT_SHALLOW ON
 	GIT_PROGRESS ON
 
-	CONFIGURE_COMMAND cd <SOURCE_DIR> && ./bootstrap.sh && ./configure --prefix=${BUILD_ARTIFACTS_DIR}
+	CONFIGURE_COMMAND cd <SOURCE_DIR> && ./bootstrap.sh && ./configure ${AUTOTOOLS_FLAGS} --prefix=${BUILD_ARTIFACTS_DIR}
 	BUILD_COMMAND cd <SOURCE_DIR> && make
 	INSTALL_COMMAND cd <SOURCE_DIR> && make install
 	UPDATE_COMMAND ""
@@ -51,7 +51,7 @@ ExternalProject_Add(sofia_sip
 
 
 set(FS_CFG_CMD
-	PKG_CONFIG_PATH=${BUILD_ARTIFACTS_DIR}/lib/pkgconfig ./configure --prefix=${BUILD_ARTIFACTS_DIR} --disable-libyuv --disable-libvpx --disable-srtp --disable-core-libedit-support --without-freetype --enable-core-odbc-support=no
+	PKG_CONFIG_PATH=${BUILD_ARTIFACTS_DIR}/lib/pkgconfig ./configure ${AUTOTOOLS_FLAGS} --prefix=${BUILD_ARTIFACTS_DIR} --disable-libyuv --disable-libvpx --disable-srtp --disable-core-libedit-support --without-freetype --enable-core-odbc-support=no
 )
 set(FS_PATCH_DIR ${CMAKE_CURRENT_LIST_DIR}/FS_build_conf_patches)
 set(FS_PATCH_CMD
