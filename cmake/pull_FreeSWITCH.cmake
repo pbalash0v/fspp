@@ -38,7 +38,7 @@ set(BUILD_ARTIFACTS_DIR ${CMAKE_BINARY_DIR}/build_artifacts)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(AUTOTOOLS_FLAGS "CFLAGS=-ggdb3 -O0")
 else()
-	set(AUTOTOOLS_FLAGS "--disable-debug --enable-optimization")
+	set(AUTOTOOLS_FLAGS --disable-debug --enable-optimization)
 endif()
 
 ExternalProject_Add(spandsp
