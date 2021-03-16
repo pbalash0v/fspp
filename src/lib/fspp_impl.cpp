@@ -12,7 +12,7 @@
 namespace
 {
 
-auto on_xml_search = [](const char* section, const char* /*tag_name*/, const char* key_name, const char* key_value
+auto on_xml_search = [](const char* section, const char* tag_name, const char* key_name, const char* key_value
 	, switch_event_t* , void* user_data) -> switch_xml_t
 {
 	auto* self = static_cast<fspp::lib_impl*>(user_data);
@@ -24,7 +24,7 @@ auto on_xml_search = [](const char* section, const char* /*tag_name*/, const cha
 	// std::cerr << "key_value: " << key_value << '\n';
 	// std::cerr << "----" << '\n';
 
-	if (auto xml_str = self->cfg()({section, key_name, key_value}); xml_str)
+	if (auto xml_str = self->cfg()({section, tag_name, key_name, key_value}); xml_str)
 	{
 		return switch_xml_parse_str_dup(xml_str->data());
 	}
@@ -61,7 +61,7 @@ lib_impl::lib_impl()
 		BOOST_THROW_EXCEPTION(std::runtime_error{static_cast<const char*>(err)});
 	}
 
-	::switch_xml_bind_search_function(on_xml_search, SWITCH_XML_SECTION_CONFIG, this);
+	::switch_xml_bind_search_function(on_xml_search, SWITCH_XML_SECTION_CONFIG | SWITCH_XML_SECTION_DIALPLAN, this);
 
    	if (auto res = ::switch_core_init_and_modload(flags, console ? SWITCH_TRUE : SWITCH_FALSE, &err); res != SWITCH_STATUS_SUCCESS)
    	{

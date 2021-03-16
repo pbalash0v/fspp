@@ -23,7 +23,7 @@ target_link_libraries(app PRIVATE
 	FSPP::fspp
 )
 
-if(OFF)
+
 ########## TEMPORARY
 add_executable(pg)
 target_sources(pg PRIVATE
@@ -42,4 +42,4 @@ target_link_libraries(pg PRIVATE
 	${CMAKE_DL_LIBS}
 	FSPP::fspp	
 )
-endif()
+

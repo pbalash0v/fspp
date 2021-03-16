@@ -17,6 +17,7 @@ extern switch_loadable_module_function_table_t mod_event_socket_module_interface
 extern switch_loadable_module_function_table_t mod_commands_module_interface;
 extern switch_loadable_module_function_table_t mod_logfile_module_interface;
 extern switch_loadable_module_function_table_t mod_console_module_interface;
+extern switch_loadable_module_function_table_t mod_dialplan_xml_module_interface;
 }
 
 } //anon namespace
@@ -36,7 +37,8 @@ public:
 			or not mod_event_socket_module_interface_
 			or not mod_commands_module_interface_
 			or not mod_logfile_module_interface_
-			or not mod_console_module_interface_			
+			or not mod_console_module_interface_
+			or not mod_dialplan_xml_module_interface_
 			)
 		{
 			BOOST_THROW_EXCEPTION(std::runtime_error{"Builtin FreeSWITCH modules was not proprely linked"});
@@ -52,6 +54,7 @@ private:
 	const void* mod_commands_module_interface_ = static_cast<void*>(&mod_commands_module_interface);
 	const void* mod_logfile_module_interface_ = static_cast<void*>(&mod_logfile_module_interface);
 	const void* mod_console_module_interface_ = static_cast<void*>(&mod_console_module_interface);
+	const void* mod_dialplan_xml_module_interface_ = static_cast<void*>(&mod_dialplan_xml_module_interface);
 };
 
 } // namespace fspp

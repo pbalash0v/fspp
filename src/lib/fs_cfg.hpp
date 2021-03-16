@@ -17,14 +17,6 @@ namespace bpt = boost::property_tree;
 namespace fspp
 {
 
-inline std::string to_string(const bpt::ptree& cfg)
-{
-	std::ostringstream oss;
-	bpt::xml_parser::write_xml(oss, cfg);
-	return oss.str();
-}
-
-
 struct fs_cfg final
 {
 	fs_cfg() = default;
@@ -36,9 +28,10 @@ struct fs_cfg final
 
 	struct conf_tuple
 	{
-		std::string section;
-		std::string key;
-		std::string value;
+		std::string_view section;
+		std::string_view tag;
+		std::string_view key;
+		std::string_view value;
 	};
 	std::optional<std::string> operator()(const conf_tuple&) const;
 
@@ -47,6 +40,7 @@ struct fs_cfg final
 	static bpt::ptree event_socket_conf();
 	static bpt::ptree console_conf();
 	static bpt::ptree logfile_conf();
+	static bpt::ptree sofia_conf();
 
 	//
 	fspp::freeswitch_xml freeswitch_xml_;
@@ -55,7 +49,8 @@ struct fs_cfg final
 		{"switch.conf", fs_cfg::switch_conf},
 		{"event_socket.conf", fs_cfg::event_socket_conf},
 		{"console.conf", fs_cfg::console_conf},
-		{"logfile.conf", fs_cfg::logfile_conf},		
+		{"logfile.conf", fs_cfg::logfile_conf},
+		{"sofia.conf", fs_cfg::sofia_conf},
 	};
 };
 

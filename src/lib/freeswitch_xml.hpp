@@ -22,10 +22,8 @@ public:
 		auto freeswitch_dot_xml = []()
 		{
 			bpt::ptree document;
-
-			//auto& document = pt.put("document", "");
 			document.put("document", "");
-			document.put("document.<xmlattr>.type", "freeswitch/xml");
+			document.put("<xmlattr>.type", "freeswitch/xml");
 			return document;
 		}();
 

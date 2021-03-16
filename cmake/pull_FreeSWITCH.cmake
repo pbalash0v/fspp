@@ -59,7 +59,8 @@ set(FS_PATCH_CMD
 	cp ${FS_PATCH_DIR}/mod_commands_Makefile.am <SOURCE_DIR>/src/mod/applications/mod_commands/Makefile.am && 
 	cp ${FS_PATCH_DIR}/mod_console_Makefile.am <SOURCE_DIR>/src/mod/loggers/mod_console/Makefile.am && 
 	cp ${FS_PATCH_DIR}/mod_logfile_Makefile.am <SOURCE_DIR>/src/mod/loggers/mod_logfile/Makefile.am &&
-	cp ${FS_PATCH_DIR}/mod_event_socket_Makefile.am <SOURCE_DIR>/src/mod/event_handlers/mod_event_socket/Makefile.am
+	cp ${FS_PATCH_DIR}/mod_event_socket_Makefile.am <SOURCE_DIR>/src/mod/event_handlers/mod_event_socket/Makefile.am &&
+	cp ${FS_PATCH_DIR}/mod_dialplan_xml_Makefile.am <SOURCE_DIR>/src/mod/dialplans/mod_dialplan_xml/Makefile.am
 )
 
 ExternalProject_Add(freeswitch
@@ -77,14 +78,6 @@ ExternalProject_Add(freeswitch
 )
 ExternalProject_Get_property(freeswitch SOURCE_DIR)
 ExternalProject_Add_StepDependencies(freeswitch configure spandsp sofia_sip)
-
-
-#detect FreeSWITCH
-#find_package(PkgConfig REQUIRED)
-#pkg_check_modules(freeswitch REQUIRED IMPORTED_TARGET freeswitch)
-#if(freeswitch_FOUND)
-#	target_link_libraries(resip_static_resip INTERFACE PkgConfig::freeswitch)
-#endif()
 
 
 #########################################################
@@ -134,6 +127,7 @@ fs_mod_2_lib(mod_event_socket_static libmod_event_socket.a ${SOURCE_DIR}/src/mod
 fs_mod_2_lib(mod_commands_static libmod_commands.a ${SOURCE_DIR}/src/mod/applications/mod_commands/.libs)
 fs_mod_2_lib(mod_logfile_static libmod_logfile.a ${SOURCE_DIR}/src/mod/loggers/mod_logfile/.libs)
 fs_mod_2_lib(mod_console_static libmod_console.a ${SOURCE_DIR}/src/mod/loggers/mod_console/.libs)
+fs_mod_2_lib(mod_dialplan_xml_static libmod_dialplan_xml.a ${SOURCE_DIR}/src/mod/dialplans/mod_dialplan_xml/.libs)
 
 
 # now "define" freeswitch_static
@@ -148,6 +142,7 @@ set_target_properties(freeswitch_static PROPERTIES
 
 target_include_directories(freeswitch_static SYSTEM INTERFACE ${BUILD_ARTIFACTS_DIR}/include/freeswitch)
 target_link_libraries(freeswitch_static INTERFACE
+	mod_dialplan_xml_static
 	mod_console_static
 	mod_logfile_static
 	mod_commands_static

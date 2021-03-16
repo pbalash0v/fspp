@@ -5,6 +5,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include <switch.h>
+
 #include "fs_cfg.hpp"
 
 namespace fs = std::filesystem;
@@ -47,6 +49,21 @@ auto conf_section_xml = [](auto& pt) -> auto&
 namespace fspp
 {
 
+inline std::string to_string(const bpt::ptree& cfg, bool human_readable = false)
+{
+	std::ostringstream oss;
+
+	if (human_readable)
+	{
+		bpt::xml_parser::write_xml(oss, cfg, bpt::xml_writer_make_settings<std::string>(' ', 2));
+	}
+	else
+	{
+		bpt::xml_parser::write_xml(oss, cfg);
+	}
+
+	return oss.str();
+}
 
 bpt::ptree fs_cfg::modules_conf()
 {
@@ -63,9 +80,9 @@ bpt::ptree fs_cfg::modules_conf()
 
 		auto& modules = conf_.put("modules", "");
 
-		// bpt::ptree mod_console_pt;
-		// mod_console_pt.add("<xmlattr>.module", "mod_console");
-		// modules.add_child("load", mod_console_pt);
+		bpt::ptree mod_console_pt;
+		mod_console_pt.add("<xmlattr>.module", "mod_console");
+		modules.add_child("load", mod_console_pt);
 
 		bpt::ptree mod_logfile_pt;
 		mod_logfile_pt.add("<xmlattr>.module", "mod_logfile");
@@ -75,9 +92,17 @@ bpt::ptree fs_cfg::modules_conf()
 		mod_event_socket_pt.add("<xmlattr>.module", "mod_event_socket");
 		modules.add_child("load", mod_event_socket_pt);
 
+		bpt::ptree mod_dialplan_xml_pt;
+		mod_dialplan_xml_pt.add("<xmlattr>.module", "mod_dialplan_xml");
+		modules.add_child("load", mod_dialplan_xml_pt);
+
 		bpt::ptree mod_commands_pt;
 		mod_commands_pt.add("<xmlattr>.module", "mod_commands");
 		modules.add_child("load", mod_commands_pt);
+
+		bpt::ptree mod_sofia_pt;
+		mod_sofia_pt.add("<xmlattr>.module", "mod_sofia");
+		modules.add_child("load", mod_sofia_pt);
 
 		return pt_;
 	}(conf_section);
@@ -188,6 +213,49 @@ bpt::ptree fs_cfg::event_socket_conf()
 	return pt;
 }
 
+bpt::ptree fs_cfg::sofia_conf()
+{
+	bpt::ptree pt;
+
+	auto& conf_section = conf_section_xml(pt);
+
+	[&](auto& parent_pt)
+	{
+		bpt::ptree pt_;
+		pt_.add("<xmlattr>.name", "sofia.conf");
+		auto& conf_ = parent_pt.add_child("configuration", pt_);
+
+		auto& profiles = conf_.put("profiles", "");
+		auto& profile = profiles.put("profile", "");
+		profile.add("<xmlattr>.name", "internal");
+		auto& settings = profile.put("settings", "");
+
+		settings.add_child("param", name_value_pt("sip-ip", switch_core_get_variable("local_ip_v4")));
+		settings.add_child("param", name_value_pt("rtp-ip", switch_core_get_variable("local_ip_v4")));
+		settings.add_child("param", name_value_pt("sip-port", "5060"));
+		settings.add_child("param", name_value_pt("ext-rtp-ip", "stun:stun.freeswitch.org"));
+		settings.add_child("param", name_value_pt("ext-sip-ip", "stun:stun.freeswitch.org"));		
+
+		settings.add_child("param", name_value_pt("inbound-codec-prefs", "PCMA,PCMU"));
+		settings.add_child("param", name_value_pt("outbound-codec-prefs", "PCMA,PCMU"));
+
+		settings.add_child("param", name_value_pt("context", "public"));
+
+		settings.add_child("param", name_value_pt("apply-nat-acl", "nat.auto"));
+		settings.add_child("param", name_value_pt("local-network-acl", "localnet.auto"));
+
+		settings.add_child("param", name_value_pt("disable-register", "true"));
+		settings.add_child("param", name_value_pt("disable-transfer", "true"));
+
+		settings.add_child("param", name_value_pt("auth-calls", "false"));		
+
+		return pt_;
+	}(conf_section);
+
+	return pt;
+}
+
+
 #if 0
 bpt::ptree fs_cfg::none_existing_conf()
 {
@@ -225,18 +293,28 @@ bpt::ptree fs_cfg::none_existing_conf()
 #endif
 
 
-
 std::optional<std::string> fs_cfg::operator()(const conf_tuple& tpl) const 
 {
-	if (tpl.section == "configuration" and tpl.key == "name")
+	// std::cerr
+	// 	<< std::string{tpl.section} << ":"
+	// 	<< std::string{tpl.tag} << ":"
+	// 	<< std::string{tpl.key} << ":"
+	// 	<< std::string{tpl.value} << ":"
+	// 	<< '\n';
+
+	if (tpl.section == std::string{"configuration"} and tpl.key == std::string{"name"})
 	{
-		if (auto it = config_funcs_.find(tpl.value); it != config_funcs_.end())
+		if (auto it = config_funcs_.find(std::string{tpl.value}); it != config_funcs_.end())
 		{
 			return to_string(it->second());
 		}
 	}
+	else if (tpl.section == std::string{"dialplan"})
+	{
+	}
 
-	//return to_string(none_existing_conf());
+	//TODO
+	//return to_string(none_existing_conf()); 
 	return std::nullopt;
 }
 
