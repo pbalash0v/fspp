@@ -21,3 +21,8 @@ RUN apt update && apt-get install --no-install-recommends -y -t buster-backports
 	ca-certificates \
 	libtiff5-dev \
 	libsndfile-dev
+WORKDIR /src
+CMD mkdir -p build && \
+	cd build && \
+	cmake -DCMAKE_BUILD_TYPE=Release ../ && \
+	cmake --build .

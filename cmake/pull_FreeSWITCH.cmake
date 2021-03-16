@@ -38,7 +38,7 @@ set(BUILD_ARTIFACTS_DIR ${CMAKE_BINARY_DIR}/build_artifacts)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(AUTOTOOLS_FLAGS "CFLAGS=-ggdb3 -O0")
 else()
-	set(AUTOTOOLS_FLAGS CPPFLAGS=-DNDEBUG CFLAGS=-O2)
+	set(AUTOTOOLS_FLAGS "--disable-debug --enable-optimization")
 endif()
 
 ExternalProject_Add(spandsp
@@ -47,7 +47,7 @@ ExternalProject_Add(spandsp
 	GIT_SHALLOW ON
 	GIT_PROGRESS ON
 
-	CONFIGURE_COMMAND cd <SOURCE_DIR> && ./bootstrap.sh && ./configure ${AUTOTOOLS_FLAGS} --prefix=${BUILD_ARTIFACTS_DIR}
+	CONFIGURE_COMMAND cd <SOURCE_DIR> && ./bootstrap.sh && ./configure --prefix=${BUILD_ARTIFACTS_DIR}
 	BUILD_COMMAND cd <SOURCE_DIR> && make
 	INSTALL_COMMAND cd <SOURCE_DIR> && make install
 	UPDATE_COMMAND ""
@@ -60,7 +60,7 @@ ExternalProject_Add(sofia_sip
 	GIT_SHALLOW ON
 	GIT_PROGRESS ON
 
-	CONFIGURE_COMMAND cd <SOURCE_DIR> && ./bootstrap.sh && ./configure ${AUTOTOOLS_FLAGS} --prefix=${BUILD_ARTIFACTS_DIR}
+	CONFIGURE_COMMAND cd <SOURCE_DIR> && ./bootstrap.sh && ./configure --prefix=${BUILD_ARTIFACTS_DIR}
 	BUILD_COMMAND cd <SOURCE_DIR> && make
 	INSTALL_COMMAND cd <SOURCE_DIR> && make install
 	UPDATE_COMMAND ""

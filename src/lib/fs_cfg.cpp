@@ -126,7 +126,7 @@ bpt::ptree fs_cfg::modules_conf()
 	}(conf_section);
 
 	return pt;
-};
+}
 
 bpt::ptree fs_cfg::console_conf()
 {
