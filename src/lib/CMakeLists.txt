@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION ${FSPP_CMAKE_VERSION})
 
 #################################
-# Find deps
-#################################
-
-#################################
 # Define targets
 #################################
 add_library(${PROJECT_NAME})
