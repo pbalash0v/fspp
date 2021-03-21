@@ -1,13 +1,14 @@
 FROM debian:buster-backports
 RUN apt update && apt-get install --no-install-recommends -y -t buster-backports \
 	cmake \
+	python-dev \
 	build-essential \
 	autoconf \
 	automake \
 	libtool \
 	libtool-bin \	
 	pkg-config \
-	libboost1.74-all-dev \
+	libboost1.74-dev \
 	libssl-dev \
 	libsqlite3-dev \
 	zlib1g-dev \

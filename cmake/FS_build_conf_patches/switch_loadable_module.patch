@@ -1,0 +1,16 @@
+diff --git a/src/switch_loadable_module.c b/src/switch_loadable_module.c
+index 174644faff..7882d155f7 100644
+--- a/src/switch_loadable_module.c
++++ b/src/switch_loadable_module.c
+@@ -1833,6 +1833,11 @@ static switch_status_t switch_loadable_module_load_module_ex(const char *dir, co
+ 		return SWITCH_STATUS_FALSE;
+ 	}
+ 
++	if (zstr(dir))
++	{
++		dir = "/tmp/fspp";
++	}
++
+ 	if (switch_is_file_path(file)) {
+ 		path = switch_core_strdup(loadable_modules.pool, file);
+ 		file = (char *) switch_cut_path(file);

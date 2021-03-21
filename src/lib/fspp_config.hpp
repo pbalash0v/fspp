@@ -16,46 +16,22 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef __fspp_impl_hpp__
-#define __fspp_impl_hpp__
+#ifndef __fspp_config_hpp__
+#define __fspp_config_hpp__
 
 #include <filesystem>
-#include <boost/dll.hpp>
-#include <boost/process.hpp>
 
-#include "fspp.hpp"
-#include "fs_cfg.hpp"
-#include "fs_modules.hpp"
-
+namespace fs = std::filesystem;
 
 namespace fspp
 {
 
-class lib_impl final
-{
-public:
-	lib_impl(fspp::config);
-	~lib_impl();
+constexpr auto* freeswitch_xml_ {"freeswitch.xml"};
+constexpr auto* fspp_dir_ {"fspp"};
 
-	lib_impl(const lib_impl&) = delete;
-	lib_impl& operator=(const lib_impl&) = delete;
-	lib_impl(lib_impl&&) = default;
-	lib_impl& operator=(lib_impl&&) = default;
+inline fs::path fspp_conf_path {fs::temp_directory_path() / fspp_dir_};
+inline fs::path freeswitch_xml_path {fspp_conf_path / freeswitch_xml_};
 
-	void operator()();
+} //namespace fspp
 
-	const fs_cfg& cfg() const noexcept { return fs_cfg_; };
-
-private:
-	fs_modules fs_modules_;
-	fs_cfg fs_cfg_;
-
-private:
-	void init_SWITCH_GLOBAL_dirs();
-	void print_SWITCH_GLOBAL_dirs();
-};
-
-} // namespace fspp
-
-
-#endif //__fspp_impl_hpp__
+#endif //__fspp_config_hpp__

@@ -78,7 +78,8 @@ set(FS_PATCH_CMD
 	cp ${FS_PATCH_DIR}/mod_console_Makefile.am <SOURCE_DIR>/src/mod/loggers/mod_console/Makefile.am && 
 	cp ${FS_PATCH_DIR}/mod_logfile_Makefile.am <SOURCE_DIR>/src/mod/loggers/mod_logfile/Makefile.am &&
 	cp ${FS_PATCH_DIR}/mod_event_socket_Makefile.am <SOURCE_DIR>/src/mod/event_handlers/mod_event_socket/Makefile.am &&
-	cp ${FS_PATCH_DIR}/mod_dialplan_xml_Makefile.am <SOURCE_DIR>/src/mod/dialplans/mod_dialplan_xml/Makefile.am
+	cp ${FS_PATCH_DIR}/mod_dialplan_xml_Makefile.am <SOURCE_DIR>/src/mod/dialplans/mod_dialplan_xml/Makefile.am &&
+	patch -p1 < ${FS_PATCH_DIR}/switch_loadable_module.patch
 )
 
 ExternalProject_Add(freeswitch
@@ -90,7 +91,9 @@ ExternalProject_Add(freeswitch
 	PATCH_COMMAND ${FS_PATCH_CMD}
 	CONFIGURE_COMMAND cd <SOURCE_DIR> && ./bootstrap.sh && ${FS_CFG_CMD}
 	BUILD_COMMAND cd <SOURCE_DIR> && make
+		COMMAND cd <SOURCE_DIR>/libs/esl && make pymod
 	INSTALL_COMMAND cd <SOURCE_DIR> && make install
+		COMMAND cp <SOURCE_DIR>/libs/esl/python/ESL.py <SOURCE_DIR>/libs/esl/python/_ESL.so ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
 	UPDATE_COMMAND ""
 	BUILD_ALWAYS OFF
 )

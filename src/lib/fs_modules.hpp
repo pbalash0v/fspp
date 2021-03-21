@@ -19,7 +19,11 @@
 #ifndef __fs_modules_hpp__
 #define __fs_modules_hpp__
 
+#include <filesystem>
 #include <boost/throw_exception.hpp>
+#include <boost/dll.hpp>
+#include "fspp_config.hpp"
+
 #include <switch.h>
 
 namespace
@@ -40,13 +44,15 @@ extern switch_loadable_module_function_table_t mod_dialplan_xml_module_interface
 
 } //anon namespace
 
+namespace dll = boost::dll;
+
 namespace fspp
 {
 
 class fs_modules final
 {
 public:
-	fs_modules()
+	fs_modules(const fspp::config& cfg)
 	{
 		if (not CORE_PCM_MODULE_module_interface_
 			or not CORE_SPEEX_MODULE_module_interface_
@@ -60,6 +66,25 @@ public:
 			)
 		{
 			BOOST_THROW_EXCEPTION(std::runtime_error{"Builtin FreeSWITCH modules was not proprely linked"});
+		}
+
+		fs::remove_all(fspp_conf_path);
+		fs::create_directory(fspp_conf_path);
+
+		// fake symlinks for python module
+		if (cfg.python)
+		{
+			// core modules
+			std::filesystem::create_symlink(dll::symbol_location_ptr(&CORE_SOFTTIMER_MODULE_module_interface), fspp_conf_path/"CORE_SOFTTIMER_MODULE.so");
+			std::filesystem::create_symlink(dll::symbol_location_ptr(&CORE_PCM_MODULE_module_interface), fspp_conf_path/"CORE_PCM_MODULE.so");
+			std::filesystem::create_symlink(dll::symbol_location_ptr(&CORE_SPEEX_MODULE_module_interface), fspp_conf_path/"CORE_SPEEX_MODULE.so");
+			// common modules
+			std::filesystem::create_symlink(dll::symbol_location_ptr(&mod_console_module_interface), fspp_conf_path/"mod_console.so");
+			std::filesystem::create_symlink(dll::symbol_location_ptr(&mod_sofia_module_interface), fspp_conf_path/"mod_sofia.so");
+			std::filesystem::create_symlink(dll::symbol_location_ptr(&mod_event_socket_module_interface), fspp_conf_path/"mod_event_socket.so");
+			std::filesystem::create_symlink(dll::symbol_location_ptr(&mod_commands_module_interface), fspp_conf_path/"mod_commands.so");
+			std::filesystem::create_symlink(dll::symbol_location_ptr(&mod_logfile_module_interface), fspp_conf_path/"mod_logfile.so");
+			std::filesystem::create_symlink(dll::symbol_location_ptr(&mod_dialplan_xml_module_interface), fspp_conf_path/"mod_dialplan_xml.so");
 		}
 	}
 

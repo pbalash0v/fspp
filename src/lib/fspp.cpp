@@ -23,7 +23,7 @@
 namespace fspp
 {
 
-lib::lib() : p_impl_{std::make_unique<lib_impl>()}
+lib::lib(fspp::config lib_cfg) : p_impl_{std::make_unique<lib_impl>(lib_cfg)}
 {
 }
 

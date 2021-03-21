@@ -26,10 +26,15 @@ namespace fspp
 {
 class lib_impl;
 
+struct config
+{
+	bool python {false};
+};
+
 class lib final
 {
 public:
-	lib();
+	lib(config = {});
 	~lib();
 
 	lib(const lib&) = delete;

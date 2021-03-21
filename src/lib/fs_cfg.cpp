@@ -25,7 +25,9 @@
 
 #include <switch.h>
 
+#include "fspp.hpp"
 #include "fs_cfg.hpp"
+
 
 namespace fs = std::filesystem;
 namespace bpt = boost::property_tree;
@@ -67,6 +69,10 @@ auto conf_section_xml = [](auto& pt) -> auto&
 namespace fspp
 {
 
+fs_cfg::fs_cfg(fspp::config cfg) : cfg_{cfg}
+{
+}
+
 inline std::string to_string(const bpt::ptree& cfg, bool human_readable = false)
 {
 	std::ostringstream oss;
@@ -83,7 +89,7 @@ inline std::string to_string(const bpt::ptree& cfg, bool human_readable = false)
 	return oss.str();
 }
 
-bpt::ptree fs_cfg::modules_conf()
+bpt::ptree fs_cfg::modules_conf(const fs_cfg&)
 {
 	bpt::ptree pt;
 
@@ -128,7 +134,7 @@ bpt::ptree fs_cfg::modules_conf()
 	return pt;
 }
 
-bpt::ptree fs_cfg::console_conf()
+bpt::ptree fs_cfg::console_conf(const fs_cfg&)
 {
 	bpt::ptree pt;
 
@@ -154,7 +160,7 @@ bpt::ptree fs_cfg::console_conf()
 	return pt;
 }
 
-bpt::ptree fs_cfg::logfile_conf()
+bpt::ptree fs_cfg::logfile_conf(const fs_cfg&)
 {
 	bpt::ptree pt;
 
@@ -177,7 +183,7 @@ bpt::ptree fs_cfg::logfile_conf()
 	return pt;
 }
 
-bpt::ptree fs_cfg::switch_conf()
+bpt::ptree fs_cfg::switch_conf(const fs_cfg&)
 {
 	bpt::ptree pt;
 
@@ -206,7 +212,7 @@ bpt::ptree fs_cfg::switch_conf()
 	return pt;
 }
 
-bpt::ptree fs_cfg::event_socket_conf()
+bpt::ptree fs_cfg::event_socket_conf(const fs_cfg&)
 {
 	bpt::ptree pt;
 
@@ -231,7 +237,7 @@ bpt::ptree fs_cfg::event_socket_conf()
 	return pt;
 }
 
-bpt::ptree fs_cfg::sofia_conf()
+bpt::ptree fs_cfg::sofia_conf(const fs_cfg&)
 {
 	bpt::ptree pt;
 
@@ -324,7 +330,7 @@ std::optional<std::string> fs_cfg::operator()(const conf_tuple& tpl) const
 	{
 		if (auto it = config_funcs_.find(std::string{tpl.value}); it != config_funcs_.end())
 		{
-			return to_string(it->second());
+			return to_string(it->second(*this));
 		}
 	}
 	else if (tpl.section == std::string{"dialplan"})

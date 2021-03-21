@@ -22,7 +22,7 @@
 #include <switch.h>
 
 #include "fspp_impl.hpp"
-#include "fs_cfg.hpp"
+#include "fspp_config.hpp"
 
 
 namespace
@@ -56,7 +56,9 @@ auto on_xml_search = [](const char* section, const char* tag_name, const char* k
 namespace fspp
 {
 
-lib_impl::lib_impl()
+lib_impl::lib_impl(fspp::config cfg)
+	: fs_modules_{cfg}
+	, fs_cfg_{cfg}
 {
 	// loads internal SWITCH_GLOBAL_dirs struct of char* with autoconf generated values (?)
     ::switch_core_set_globals();
@@ -103,7 +105,7 @@ void lib_impl::operator()()
 
 void lib_impl::init_SWITCH_GLOBAL_dirs()
 {
-	auto dup_c_str = [](const std::string& str, auto*& dest)
+	auto dup_c_str = [](const auto& str, auto*& dest)
 	{
 		switch_safe_free(dest);
 
@@ -116,14 +118,14 @@ void lib_impl::init_SWITCH_GLOBAL_dirs()
 		dest = res;
 	};
 
-	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.base_dir);
-	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.mod_dir);
-	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.conf_dir);
-	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.log_dir);
-	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.run_dir);
-	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.lib_dir);
-	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.temp_dir);
-	dup_c_str(m_fs_cfg.freeswitch_xml_, SWITCH_GLOBAL_dirs.db_dir);	
+	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.base_dir);
+	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.mod_dir);
+	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.conf_dir);
+	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.log_dir);
+	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.run_dir);
+	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.lib_dir);
+	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.temp_dir);
+	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.db_dir);	
 }
 
 void lib_impl::print_SWITCH_GLOBAL_dirs()

@@ -26,7 +26,7 @@ message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 set(FSPP_CMAKE_VERSION "3.16")
 
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.74.0 REQUIRED COMPONENTS program_options system filesystem)
+find_package(Boost 1.74.0 REQUIRED COMPONENTS)# system filesystem)
 
 find_package(Filesystem REQUIRED)
 

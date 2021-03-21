@@ -34,15 +34,11 @@ namespace bpt = boost::property_tree;
 
 namespace fspp
 {
+struct config;
 
 struct fs_cfg final
 {
-	fs_cfg() = default;
-
-	fs_cfg(const fs_cfg&) = delete;
-	fs_cfg&	operator=(const fs_cfg&) = delete;
-	fs_cfg(fs_cfg&&) = default;
-	fs_cfg&	operator=(fs_cfg&&) = default;
+	fs_cfg(fspp::config);
 
 	struct conf_tuple
 	{
@@ -53,22 +49,25 @@ struct fs_cfg final
 	};
 	std::optional<std::string> operator()(const conf_tuple&) const;
 
-	static bpt::ptree modules_conf();
-	static bpt::ptree switch_conf();
-	static bpt::ptree event_socket_conf();
-	static bpt::ptree console_conf();
-	static bpt::ptree logfile_conf();
-	static bpt::ptree sofia_conf();
+	static bpt::ptree modules_conf(const fs_cfg&);
+	static bpt::ptree switch_conf(const fs_cfg&);
+	static bpt::ptree event_socket_conf(const fs_cfg&);
+	static bpt::ptree console_conf(const fs_cfg&);
+	static bpt::ptree logfile_conf(const fs_cfg&);
+	static bpt::ptree sofia_conf(const fs_cfg&);
 
 	//
+	fspp::config cfg_;
+
 	fspp::freeswitch_xml freeswitch_xml_;
-	std::unordered_map<std::string, std::function<bpt::ptree()>> config_funcs_ {
-		{"modules.conf", fs_cfg::modules_conf},
-		{"switch.conf", fs_cfg::switch_conf},
-		{"event_socket.conf", fs_cfg::event_socket_conf},
-		{"console.conf", fs_cfg::console_conf},
-		{"logfile.conf", fs_cfg::logfile_conf},
-		{"sofia.conf", fs_cfg::sofia_conf},
+
+	std::unordered_map<std::string, std::function<bpt::ptree(const fs_cfg&)>> config_funcs_ {
+		{"modules.conf", &fs_cfg::modules_conf},
+		{"switch.conf", &fs_cfg::switch_conf},
+		{"event_socket.conf", &fs_cfg::event_socket_conf},
+		{"console.conf", &fs_cfg::console_conf},
+		{"logfile.conf", &fs_cfg::logfile_conf},
+		{"sofia.conf", &fs_cfg::sofia_conf}
 	};
 };
 
