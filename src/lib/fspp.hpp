@@ -29,6 +29,7 @@ class lib_impl;
 struct config
 {
 	bool python {false};
+	bool console {false};
 };
 
 class lib final

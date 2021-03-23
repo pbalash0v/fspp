@@ -26,6 +26,9 @@
 
 #include <switch.h>
 
+namespace dll = boost::dll;
+namespace fs = std::filesystem;
+
 namespace
 {
 
@@ -42,9 +45,14 @@ extern switch_loadable_module_function_table_t mod_console_module_interface;
 extern switch_loadable_module_function_table_t mod_dialplan_xml_module_interface;
 }
 
+const auto path_to_py_so = [](const auto& symbol)
+{
+	return dll::symbol_location(symbol).is_absolute() ?
+		dll::symbol_location(symbol) : fs::current_path() / dll::symbol_location(symbol);
+};
+
 } //anon namespace
 
-namespace dll = boost::dll;
 
 namespace fspp
 {
@@ -75,16 +83,16 @@ public:
 		if (cfg.python)
 		{
 			// core modules
-			std::filesystem::create_symlink(dll::symbol_location_ptr(&CORE_SOFTTIMER_MODULE_module_interface), fspp_conf_path/"CORE_SOFTTIMER_MODULE.so");
-			std::filesystem::create_symlink(dll::symbol_location_ptr(&CORE_PCM_MODULE_module_interface), fspp_conf_path/"CORE_PCM_MODULE.so");
-			std::filesystem::create_symlink(dll::symbol_location_ptr(&CORE_SPEEX_MODULE_module_interface), fspp_conf_path/"CORE_SPEEX_MODULE.so");
+			fs::create_symlink(path_to_py_so(CORE_SOFTTIMER_MODULE_module_interface), fspp_conf_path/"CORE_SOFTTIMER_MODULE.so");
+			fs::create_symlink(path_to_py_so(CORE_PCM_MODULE_module_interface), fspp_conf_path/"CORE_PCM_MODULE.so");
+			fs::create_symlink(path_to_py_so(CORE_SPEEX_MODULE_module_interface), fspp_conf_path/"CORE_SPEEX_MODULE.so");
 			// common modules
-			std::filesystem::create_symlink(dll::symbol_location_ptr(&mod_console_module_interface), fspp_conf_path/"mod_console.so");
-			std::filesystem::create_symlink(dll::symbol_location_ptr(&mod_sofia_module_interface), fspp_conf_path/"mod_sofia.so");
-			std::filesystem::create_symlink(dll::symbol_location_ptr(&mod_event_socket_module_interface), fspp_conf_path/"mod_event_socket.so");
-			std::filesystem::create_symlink(dll::symbol_location_ptr(&mod_commands_module_interface), fspp_conf_path/"mod_commands.so");
-			std::filesystem::create_symlink(dll::symbol_location_ptr(&mod_logfile_module_interface), fspp_conf_path/"mod_logfile.so");
-			std::filesystem::create_symlink(dll::symbol_location_ptr(&mod_dialplan_xml_module_interface), fspp_conf_path/"mod_dialplan_xml.so");
+			fs::create_symlink(path_to_py_so(mod_console_module_interface), fspp_conf_path/"mod_console.so");
+			fs::create_symlink(path_to_py_so(mod_sofia_module_interface), fspp_conf_path/"mod_sofia.so");
+			fs::create_symlink(path_to_py_so(mod_event_socket_module_interface), fspp_conf_path/"mod_event_socket.so");
+			fs::create_symlink(path_to_py_so(mod_commands_module_interface), fspp_conf_path/"mod_commands.so");
+			fs::create_symlink(path_to_py_so(mod_logfile_module_interface), fspp_conf_path/"mod_logfile.so");
+			fs::create_symlink(path_to_py_so(mod_dialplan_xml_module_interface), fspp_conf_path/"mod_dialplan_xml.so");
 		}
 	}
 

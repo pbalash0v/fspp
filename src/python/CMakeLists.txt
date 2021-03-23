@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION ${FSPP_CMAKE_VERSION})
 
-
 #################################
 # Find deps
 #################################
@@ -36,5 +35,5 @@ target_link_libraries(pyfspp PUBLIC
 )
 
 # copy example
-configure_file(example.py ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
+configure_file(version.py ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
 

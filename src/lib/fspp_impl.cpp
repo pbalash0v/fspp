@@ -71,20 +71,19 @@ lib_impl::lib_impl(fspp::config cfg)
 
     //
     switch_core_flag_t flags {SCF_USE_SQL};
-	bool console {true};
     const char* err {nullptr};
 
-	if (auto res = ::switch_core_init(flags, console ? SWITCH_TRUE : SWITCH_FALSE, &err); res != SWITCH_STATUS_SUCCESS)
+	if (auto res = ::switch_core_init(flags, cfg.console ? SWITCH_TRUE : SWITCH_FALSE, &err); res != SWITCH_STATUS_SUCCESS)
 	{
 		BOOST_THROW_EXCEPTION(std::runtime_error{static_cast<const char*>(err)});
 	}
 
 	::switch_xml_bind_search_function(on_xml_search, SWITCH_XML_SECTION_CONFIG | SWITCH_XML_SECTION_DIALPLAN, this);
 
-   	if (auto res = ::switch_core_init_and_modload(flags, console ? SWITCH_TRUE : SWITCH_FALSE, &err); res != SWITCH_STATUS_SUCCESS)
-   	{
-   		BOOST_THROW_EXCEPTION(std::runtime_error{static_cast<const char*>(err)});
-   	}
+	if (auto res = ::switch_core_init_and_modload(flags, cfg.console ? SWITCH_TRUE : SWITCH_FALSE, &err); res != SWITCH_STATUS_SUCCESS)
+	{
+		BOOST_THROW_EXCEPTION(std::runtime_error{static_cast<const char*>(err)});
+	}
 }
 
 lib_impl::~lib_impl()
@@ -93,15 +92,12 @@ lib_impl::~lib_impl()
 	BOOST_ASSERT(destroy_status == SWITCH_STATUS_SUCCESS);
 }
 
+// blocks here in console or stdout
 void lib_impl::operator()()
 {
-    //print_SWITCH_GLOBAL_dirs();
-
-    // blocks here in console or stdout
-	::switch_core_runtime_loop(false);
-    //print_SWITCH_GLOBAL_dirs();
+    auto background {true};
+	::switch_core_runtime_loop(background);
 }
-
 
 void lib_impl::init_SWITCH_GLOBAL_dirs()
 {

@@ -12,10 +12,8 @@ import pyfspp
 
 class FreeSWITCH(multiprocessing.Process):
 	def run(self):
-		sys.stdout = open(os.devnull, 'w')
-		sys.stderr = open(os.devnull, 'w')
-		pyfspp.FSPP()()
-	
+		fs = pyfspp.FSPP()
+		fs()
 
 def get_esl_connection():
 	while True:
@@ -31,14 +29,19 @@ def shutdown_fs(esl_conn):
 	e = esl_conn.api("shutdown")
 	return e.getBody()
 
+
 def main():
 	p = FreeSWITCH()
 	p.start()
-	esl_conn = get_esl_connection()
-	fs_version = get_fs_version(esl_conn)
-	shutdown_fs(esl_conn)
-	p.join()
-	print '\n',fs_version
+	try:
+		esl_conn = get_esl_connection()
+		print 'ESL connected'
+		fs_version = get_fs_version(esl_conn)
+		print fs_version
+		shutdown_fs(esl_conn)
+		p.join()
+	except KeyboardInterrupt:
+		p.terminate()
 
 
 if __name__ == '__main__':
