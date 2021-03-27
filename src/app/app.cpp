@@ -21,7 +21,10 @@
 
 int main()
 {
-	fspp::lib fspp;
-	fspp();
+	fspp::config cfg{};
+	cfg.python = false;
+	cfg.console = true;
 
+	fspp::lib fspp{cfg};
+	fspp();
 }

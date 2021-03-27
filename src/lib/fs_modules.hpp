@@ -26,23 +26,27 @@
 
 #include <switch.h>
 
+
 namespace dll = boost::dll;
 namespace fs = std::filesystem;
+
+#define EXTERN_FS_C_OBJ(symbol) extern switch_loadable_module_function_table_t symbol
+#define PRIVATE_OBJ(symbol) const void* symbol ## _ = static_cast<void*>(&symbol)
 
 namespace
 {
 
 extern "C"
 {
-extern switch_loadable_module_function_table_t CORE_SOFTTIMER_MODULE_module_interface;
-extern switch_loadable_module_function_table_t CORE_PCM_MODULE_module_interface;
-extern switch_loadable_module_function_table_t CORE_SPEEX_MODULE_module_interface;
-extern switch_loadable_module_function_table_t mod_sofia_module_interface;
-extern switch_loadable_module_function_table_t mod_event_socket_module_interface;
-extern switch_loadable_module_function_table_t mod_commands_module_interface;
-extern switch_loadable_module_function_table_t mod_logfile_module_interface;
-extern switch_loadable_module_function_table_t mod_console_module_interface;
-extern switch_loadable_module_function_table_t mod_dialplan_xml_module_interface;
+EXTERN_FS_C_OBJ(CORE_SOFTTIMER_MODULE_module_interface);
+EXTERN_FS_C_OBJ(CORE_PCM_MODULE_module_interface);
+EXTERN_FS_C_OBJ(CORE_SPEEX_MODULE_module_interface);
+EXTERN_FS_C_OBJ(mod_sofia_module_interface);
+EXTERN_FS_C_OBJ(mod_event_socket_module_interface);
+EXTERN_FS_C_OBJ(mod_commands_module_interface);
+EXTERN_FS_C_OBJ(mod_logfile_module_interface);
+EXTERN_FS_C_OBJ(mod_console_module_interface);
+EXTERN_FS_C_OBJ(mod_dialplan_xml_module_interface);
 }
 
 const auto path_to_py_so = [](const auto& symbol)
@@ -97,15 +101,15 @@ public:
 	}
 
 private:
-	const void* CORE_SOFTTIMER_MODULE_module_interface_ = static_cast<void*>(&CORE_SOFTTIMER_MODULE_module_interface);
-	const void* CORE_PCM_MODULE_module_interface_ = static_cast<void*>(&CORE_PCM_MODULE_module_interface);
-	const void* CORE_SPEEX_MODULE_module_interface_ = static_cast<void*>(&CORE_SPEEX_MODULE_module_interface);
-	const void* mod_sofia_module_interface_ = static_cast<void*>(&mod_sofia_module_interface);
-	const void* mod_event_socket_module_interface_ = static_cast<void*>(&mod_event_socket_module_interface);
-	const void* mod_commands_module_interface_ = static_cast<void*>(&mod_commands_module_interface);
-	const void* mod_logfile_module_interface_ = static_cast<void*>(&mod_logfile_module_interface);
-	const void* mod_console_module_interface_ = static_cast<void*>(&mod_console_module_interface);
-	const void* mod_dialplan_xml_module_interface_ = static_cast<void*>(&mod_dialplan_xml_module_interface);
+	PRIVATE_OBJ(CORE_SOFTTIMER_MODULE_module_interface);
+	PRIVATE_OBJ(CORE_PCM_MODULE_module_interface);
+	PRIVATE_OBJ(CORE_SPEEX_MODULE_module_interface);
+	PRIVATE_OBJ(mod_sofia_module_interface);
+	PRIVATE_OBJ(mod_event_socket_module_interface);
+	PRIVATE_OBJ(mod_commands_module_interface);
+	PRIVATE_OBJ(mod_logfile_module_interface);
+	PRIVATE_OBJ(mod_console_module_interface);
+	PRIVATE_OBJ(mod_dialplan_xml_module_interface);
 };
 
 } // namespace fspp
