@@ -30,6 +30,8 @@ struct config
 {
 	bool python {false};
 	bool console {false};
+	std::string id{};
+	std::string base_path{};
 };
 
 class lib final

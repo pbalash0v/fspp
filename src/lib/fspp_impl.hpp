@@ -24,6 +24,7 @@
 #include <boost/process.hpp>
 
 #include "fspp.hpp"
+#include "fspp_dirs.hpp"
 #include "fs_cfg.hpp"
 #include "fs_modules.hpp"
 
@@ -47,6 +48,11 @@ public:
 	const fs_cfg& cfg() const noexcept { return fs_cfg_; };
 
 private:
+	//! User-provided fspp lib config
+	fspp::config cfg_;
+	//! RAII create/delete this instance's specific directories
+	fspp::dirs dirs_;
+	//! Make sure all C symbols from stat lib are present
 	fs_modules fs_modules_;
 	fs_cfg fs_cfg_;
 

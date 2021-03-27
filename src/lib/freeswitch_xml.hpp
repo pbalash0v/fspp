@@ -23,23 +23,24 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "fspp_config.hpp"
 
 namespace fs = std::filesystem;
 namespace bpt = boost::property_tree;
 
+namespace
+{
+constexpr auto* freeswitch_xml_filename {"freeswitch.xml"};
+}
 
 namespace fspp
 {
 
-class freeswitch_xml
+class freeswitch_dot_xml
 {
 public:	
-	freeswitch_xml()
+	freeswitch_dot_xml(const fspp::config& cfg) : freeswitch_xml_{fs::path{cfg.base_path} / freeswitch_xml_filename}
 	{
-		fs::create_directory(fspp_conf_path);
-
-		auto freeswitch_dot_xml = []()
+		auto freeswitch_xml_contents = []()
 		{
 			bpt::ptree document;
 			document.put("document", "");
@@ -47,24 +48,26 @@ public:
 			return document;
 		}();
 
-		bpt::xml_parser::write_xml(freeswitch_xml_path.string(), freeswitch_dot_xml, std::locale(), bpt::xml_writer_make_settings<std::string>(' ', 2));
+		bpt::xml_parser::write_xml(freeswitch_xml_.string(), freeswitch_xml_contents, std::locale(), bpt::xml_writer_make_settings<std::string>(' ', 2));
 	}
-	
-	~freeswitch_xml()
+
+	freeswitch_dot_xml(const freeswitch_dot_xml&) = delete;
+	freeswitch_dot_xml&	operator=(const freeswitch_dot_xml&) = delete;
+	freeswitch_dot_xml(freeswitch_dot_xml&&) = default;
+	freeswitch_dot_xml&	operator=(freeswitch_dot_xml&&) = default;
+
+	~freeswitch_dot_xml()
 	{
 		std::error_code ec;
 
-		fs::remove_all(fspp_conf_path, ec);
+		fs::remove_all(freeswitch_xml_, ec);
 		if (ec)
 		{
 			std::cerr << ec << '\n';
 		}
 	}
 
-	freeswitch_xml(const freeswitch_xml&) = delete;
-	freeswitch_xml&	operator=(const freeswitch_xml&) = delete;
-	freeswitch_xml(freeswitch_xml&&) = default;
-	freeswitch_xml&	operator=(freeswitch_xml&&) = default;
+	fs::path freeswitch_xml_;
 };
 
 } // namespace fspp

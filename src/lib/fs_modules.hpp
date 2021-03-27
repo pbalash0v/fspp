@@ -22,7 +22,6 @@
 #include <filesystem>
 #include <boost/throw_exception.hpp>
 #include <boost/dll.hpp>
-#include "fspp_config.hpp"
 
 #include <switch.h>
 
@@ -80,23 +79,20 @@ public:
 			BOOST_THROW_EXCEPTION(std::runtime_error{"Builtin FreeSWITCH modules was not proprely linked"});
 		}
 
-		fs::remove_all(fspp_conf_path);
-		fs::create_directory(fspp_conf_path);
-
 		// fake symlinks for python module
 		if (cfg.python)
 		{
 			// core modules
-			fs::create_symlink(path_to_py_so(CORE_SOFTTIMER_MODULE_module_interface), fspp_conf_path/"CORE_SOFTTIMER_MODULE.so");
-			fs::create_symlink(path_to_py_so(CORE_PCM_MODULE_module_interface), fspp_conf_path/"CORE_PCM_MODULE.so");
-			fs::create_symlink(path_to_py_so(CORE_SPEEX_MODULE_module_interface), fspp_conf_path/"CORE_SPEEX_MODULE.so");
+			fs::create_symlink(path_to_py_so(CORE_SOFTTIMER_MODULE_module_interface), fs::path{cfg.base_path}/"CORE_SOFTTIMER_MODULE.so");
+			fs::create_symlink(path_to_py_so(CORE_PCM_MODULE_module_interface), fs::path{cfg.base_path}/"CORE_PCM_MODULE.so");
+			fs::create_symlink(path_to_py_so(CORE_SPEEX_MODULE_module_interface), fs::path{cfg.base_path}/"CORE_SPEEX_MODULE.so");
 			// common modules
-			fs::create_symlink(path_to_py_so(mod_console_module_interface), fspp_conf_path/"mod_console.so");
-			fs::create_symlink(path_to_py_so(mod_sofia_module_interface), fspp_conf_path/"mod_sofia.so");
-			fs::create_symlink(path_to_py_so(mod_event_socket_module_interface), fspp_conf_path/"mod_event_socket.so");
-			fs::create_symlink(path_to_py_so(mod_commands_module_interface), fspp_conf_path/"mod_commands.so");
-			fs::create_symlink(path_to_py_so(mod_logfile_module_interface), fspp_conf_path/"mod_logfile.so");
-			fs::create_symlink(path_to_py_so(mod_dialplan_xml_module_interface), fspp_conf_path/"mod_dialplan_xml.so");
+			fs::create_symlink(path_to_py_so(mod_console_module_interface), fs::path{cfg.base_path}/"mod_console.so");
+			fs::create_symlink(path_to_py_so(mod_sofia_module_interface), fs::path{cfg.base_path}/"mod_sofia.so");
+			fs::create_symlink(path_to_py_so(mod_event_socket_module_interface), fs::path{cfg.base_path}/"mod_event_socket.so");
+			fs::create_symlink(path_to_py_so(mod_commands_module_interface), fs::path{cfg.base_path}/"mod_commands.so");
+			fs::create_symlink(path_to_py_so(mod_logfile_module_interface), fs::path{cfg.base_path}/"mod_logfile.so");
+			fs::create_symlink(path_to_py_so(mod_dialplan_xml_module_interface), fs::path{cfg.base_path}/"mod_dialplan_xml.so");
 		}
 	}
 

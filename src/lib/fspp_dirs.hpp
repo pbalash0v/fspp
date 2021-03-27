@@ -16,22 +16,44 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef __fspp_config_hpp__
-#define __fspp_config_hpp__
+#ifndef __fspp_dirs_hpp__
+#define __fspp_dirs_hpp__
 
+#include <iostream>
 #include <filesystem>
 
 namespace fs = std::filesystem;
 
+
 namespace fspp
 {
 
-constexpr auto* freeswitch_xml_ {"freeswitch.xml"};
-constexpr auto* fspp_dir_ {"fspp"};
+struct dirs
+{
+	dirs(const fspp::config& cfg) : p_{cfg.base_path}
+	{
+		fs::create_directories(p_);
+	}
 
-inline fs::path fspp_conf_path {fs::temp_directory_path() / fspp_dir_};
-inline fs::path freeswitch_xml_path {fspp_conf_path / freeswitch_xml_};
+	dirs(const dirs&) = delete;
+	dirs& operator=(const dirs&) = delete;
+	dirs(dirs&&) = default;
+	dirs& operator=(dirs&&) = default;
 
-} //namespace fspp
+	~dirs()
+	{
+		std::error_code ec;
 
-#endif //__fspp_config_hpp__
+		fs::remove_all(p_, ec);
+		if (ec)
+		{
+			std::cerr << ec << '\n';
+		}
+	}
+
+	fs::path p_;
+};
+
+} // namespace fspp
+
+#endif //__fspp_dirs_hpp__

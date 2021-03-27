@@ -69,7 +69,9 @@ auto conf_section_xml = [](auto& pt) -> auto&
 namespace fspp
 {
 
-fs_cfg::fs_cfg(fspp::config cfg) : cfg_{cfg}
+fs_cfg::fs_cfg(fspp::config cfg)
+	: cfg_{cfg}
+	, freeswitch_dot_xml_{cfg}
 {
 }
 
@@ -106,26 +108,32 @@ bpt::ptree fs_cfg::modules_conf(const fs_cfg&)
 
 		bpt::ptree mod_console_pt;
 		mod_console_pt.add("<xmlattr>.module", "mod_console");
+		mod_console_pt.add("<xmlattr>.critical", "true");
 		modules.add_child("load", mod_console_pt);
 
 		bpt::ptree mod_logfile_pt;
 		mod_logfile_pt.add("<xmlattr>.module", "mod_logfile");
+		mod_logfile_pt.add("<xmlattr>.critical", "true");
 		modules.add_child("load", mod_logfile_pt);
 
 		bpt::ptree mod_event_socket_pt;
 		mod_event_socket_pt.add("<xmlattr>.module", "mod_event_socket");
+		mod_event_socket_pt.add("<xmlattr>.critical", "true");
 		modules.add_child("load", mod_event_socket_pt);
 
 		bpt::ptree mod_dialplan_xml_pt;
 		mod_dialplan_xml_pt.add("<xmlattr>.module", "mod_dialplan_xml");
+		mod_dialplan_xml_pt.add("<xmlattr>.critical", "true");
 		modules.add_child("load", mod_dialplan_xml_pt);
 
 		bpt::ptree mod_commands_pt;
 		mod_commands_pt.add("<xmlattr>.module", "mod_commands");
+		mod_commands_pt.add("<xmlattr>.critical", "true");
 		modules.add_child("load", mod_commands_pt);
 
 		bpt::ptree mod_sofia_pt;
 		mod_sofia_pt.add("<xmlattr>.module", "mod_sofia");
+		mod_sofia_pt.add("<xmlattr>.critical", "true");
 		modules.add_child("load", mod_sofia_pt);
 
 		return pt_;

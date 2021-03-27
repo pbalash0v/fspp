@@ -18,11 +18,12 @@
 
 #include <iostream>
 #include <boost/throw_exception.hpp>
+#include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 #include <switch.h>
 
 #include "fspp_impl.hpp"
-#include "fspp_config.hpp"
 
 
 namespace
@@ -50,6 +51,23 @@ auto on_xml_search = [](const char* section, const char* tag_name, const char* k
 	}
 };
 
+
+fspp::config modify_cfg(fspp::config cfg)
+{
+	constexpr auto* fspp_dir_ {"fspp"};
+	static fs::path fspp_def_base {fs::temp_directory_path() / fspp_dir_}; // usually results in "/tmp/fspp"
+	static boost::uuids::random_generator m_rand_gen;
+
+	cfg.id = boost::uuids::to_string(m_rand_gen());
+	if (cfg.base_path.empty())
+	{
+		// gives smth like "/tmp/fspp/cdb26bab-3265-4fb0-93ef-b46907c3bddd"
+		cfg.base_path = (fspp_def_base / cfg.id).string();
+	}
+
+	return cfg;
+}
+
 }
 
 
@@ -57,11 +75,13 @@ namespace fspp
 {
 
 lib_impl::lib_impl(fspp::config cfg)
-	: fs_modules_{cfg}
-	, fs_cfg_{cfg}
+	:	cfg_{modify_cfg(cfg)}
+	, dirs_{cfg_}
+	, fs_modules_{cfg_}
+	, fs_cfg_{cfg_}
 {
 	// loads internal SWITCH_GLOBAL_dirs struct of char* with autoconf generated values (?)
-    ::switch_core_set_globals();
+	::switch_core_set_globals();
 
 	// std::cerr << "Initial SWITCH_GLOBAL_dirs\n";
 	// print_SWITCH_GLOBAL_dirs();
@@ -69,9 +89,9 @@ lib_impl::lib_impl(fspp::config cfg)
 	//std::cerr << "fspp initialized SWITCH_GLOBAL_dirs\n";
 	//print_SWITCH_GLOBAL_dirs();
 
-    //
-    switch_core_flag_t flags {SCF_USE_SQL};
-    const char* err {nullptr};
+	//
+	switch_core_flag_t flags {SCF_USE_SQL};
+	const char* err {nullptr};
 
 	if (auto res = ::switch_core_init(flags, cfg.console ? SWITCH_TRUE : SWITCH_FALSE, &err); res != SWITCH_STATUS_SUCCESS)
 	{
@@ -95,7 +115,7 @@ lib_impl::~lib_impl()
 // blocks here in console or stdout
 void lib_impl::operator()()
 {
-    auto background {true};
+	auto background {true};
 	::switch_core_runtime_loop(background);
 }
 
@@ -114,14 +134,14 @@ void lib_impl::init_SWITCH_GLOBAL_dirs()
 		dest = res;
 	};
 
-	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.base_dir);
-	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.mod_dir);
-	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.conf_dir);
-	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.log_dir);
-	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.run_dir);
-	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.lib_dir);
-	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.temp_dir);
-	dup_c_str(fspp_conf_path.string(), SWITCH_GLOBAL_dirs.db_dir);	
+	dup_c_str(cfg_.base_path, SWITCH_GLOBAL_dirs.base_dir);
+	dup_c_str(cfg_.base_path, SWITCH_GLOBAL_dirs.mod_dir);
+	dup_c_str(cfg_.base_path, SWITCH_GLOBAL_dirs.conf_dir);
+	dup_c_str(cfg_.base_path, SWITCH_GLOBAL_dirs.log_dir);
+	dup_c_str(cfg_.base_path, SWITCH_GLOBAL_dirs.run_dir);
+	dup_c_str(cfg_.base_path, SWITCH_GLOBAL_dirs.lib_dir);
+	dup_c_str(cfg_.base_path, SWITCH_GLOBAL_dirs.temp_dir);
+	dup_c_str(cfg_.base_path, SWITCH_GLOBAL_dirs.db_dir);	
 }
 
 void lib_impl::print_SWITCH_GLOBAL_dirs()
