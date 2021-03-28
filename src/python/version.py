@@ -32,12 +32,15 @@ def shutdown_fs(esl_conn):
 
 def main():
 	p = FreeSWITCH()
+	print 'Starting FreeSWITCH...'
 	p.start()
 	try:
+		print 'Opening ESL connection...'
 		esl_conn = get_esl_connection()
 		print 'ESL connected'
 		fs_version = get_fs_version(esl_conn)
 		print fs_version
+		print 'Shutting down FreeSWITCH...'
 		shutdown_fs(esl_conn)
 		p.join()
 	except KeyboardInterrupt:

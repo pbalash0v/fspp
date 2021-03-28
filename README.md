@@ -12,9 +12,9 @@ docker run --mount src="$(pwd)",target=/src,type=bind fspp_build
 
 Build docker image for simple example app:
 ```shell
-docker image build -t fspp_app -f packaging/Dockerfile .
+docker image build -t fspp_app -f src/python/Dockerfile .
 ```
 Run app:
 ```shell
-docker run --net=host fspp_app
+docker run --rm --net=host fspp_app
 ```

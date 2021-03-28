@@ -56,7 +56,8 @@ ExternalProject_Add(spandsp
 
 ExternalProject_Add(sofia_sip
 	GIT_REPOSITORY https://github.com/freeswitch/sofia-sip.git
-	GIT_TAG origin/master
+#	GIT_TAG origin/master
+	GIT_TAG v1.13.3
 	GIT_SHALLOW ON
 	GIT_PROGRESS ON
 
@@ -84,7 +85,8 @@ set(FS_PATCH_CMD
 
 ExternalProject_Add(freeswitch
 	GIT_REPOSITORY https://github.com/signalwire/freeswitch
-	GIT_TAG origin/master
+#	GIT_TAG origin/master
+	GIT_TAG v1.10.6
 	GIT_SHALLOW ON
 	GIT_PROGRESS ON
 	
