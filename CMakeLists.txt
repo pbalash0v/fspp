@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(fspp
-	VERSION 0.1.1
+	VERSION 0.2.0
 	LANGUAGES CXX
 )
 
@@ -33,4 +33,7 @@ if(FSPP_BUILD_TESTS)
 endif()
 
 
-
+# packaging
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+	add_subdirectory(packaging)
+endif()

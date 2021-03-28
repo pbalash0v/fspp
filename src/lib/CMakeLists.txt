@@ -37,3 +37,17 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 target_include_directories(${PROJECT_NAME} PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
+
+#################################
+# Install
+#################################
+install(TARGETS ${PROJECT_NAME}
+	LIBRARY
+		DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		COMPONENT ${PROJECT_NAME}_Runtime
+		NAMELINK_COMPONENT ${PROJECT_NAME}_Dev
+	ARCHIVE
+		DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		COMPONENT ${PROJECT_NAME}_Dev
+)
+

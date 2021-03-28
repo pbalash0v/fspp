@@ -35,5 +35,19 @@ target_link_libraries(pyfspp PUBLIC
 )
 
 # copy example
-configure_file(version.py ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} COPYONLY)
+configure_file(version.py ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/version.py COPYONLY)
 
+#################################
+# Install
+#################################
+include(GNUInstallDirs)
+
+install(TARGETS pyfspp
+	LIBRARY
+		DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		COMPONENT ${PROJECT_NAME}_Runtime
+		NAMELINK_COMPONENT ${PROJECT_NAME}_Dev
+	ARCHIVE
+		DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		COMPONENT ${PROJECT_NAME}_Dev
+)

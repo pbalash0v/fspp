@@ -26,4 +26,6 @@ WORKDIR /src
 CMD mkdir -p build && \
 	cd build && \
 	cmake -DCMAKE_BUILD_TYPE=Release ../ && \
-	cmake --build .
+	cmake --build . && \
+	cmake --build . --target package
+
