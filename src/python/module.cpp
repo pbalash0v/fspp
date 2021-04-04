@@ -8,12 +8,19 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(pyfspp, m)
 {
+    py::class_<fspp::config, std::shared_ptr<fspp::config>>(m, "config")
+    	.def(py::init([]() { return std::make_shared<fspp::config>(); }))
+    	.def_readonly("id", &fspp::config::id)
+    	.def_readonly("base_path", &fspp::config::base_path);    	
+  //   	.def_readwrite("key_filename", &sctp::Server::Config::key_filename)
+		// .def_readwrite("debug_cback", &sctp::Server::Config::debug_cback_f);
+		
+
     py::class_<fspp::lib, std::shared_ptr<fspp::lib>>(m, "FSPP")
-    	.def(py::init([]()
+    	.def(py::init([](std::shared_ptr<fspp::config> cfg)
 			{
-				fspp::config cfg;
-				cfg.python = true;
-				return std::make_shared<fspp::lib>(cfg);
+				cfg->python = true;
+				return std::make_shared<fspp::lib>(*cfg);
 			}
 		))
 		.def("__call__", &fspp::lib::operator());

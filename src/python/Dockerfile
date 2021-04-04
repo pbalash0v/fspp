@@ -6,5 +6,5 @@ RUN apt update && apt install -y --no-install-recommends \
 	/src/fspp* 
 COPY build/out/bin/version.py /opt/fspp/bin/
 WORKDIR /opt/fspp/bin
-CMD ./version.py
+CMD PYTHONPATH=$PYTHONPATH:/opt/fspp/lib ./version.py
 

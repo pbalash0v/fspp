@@ -75,7 +75,7 @@ namespace fspp
 {
 
 lib_impl::lib_impl(fspp::config cfg)
-	:	cfg_{modify_cfg(cfg)}
+	: cfg_{modify_cfg(cfg)}
 	, dirs_{cfg_}
 	, fs_modules_{cfg_}
 	, fs_cfg_{cfg_}

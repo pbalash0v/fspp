@@ -3,9 +3,8 @@ cmake_minimum_required(VERSION ${FSPP_CMAKE_VERSION})
 #################################
 # Find deps
 #################################
-find_package(Python COMPONENTS Interpreter Development REQUIRED)
-
-set(CMAKE_CXX_VISIBILITY_PRESET "default")
+find_package(Python2 COMPONENTS Interpreter Development REQUIRED)
+set(PYBIND11_FINDPYTHON ON)
 
 message(STATUS "Standby, pulling pybind11...")
 FetchContent_Declare(pybind
@@ -30,7 +29,7 @@ set_target_properties(pyfspp PROPERTIES
 	ENABLE_EXPORTS ON
 )
 
-target_link_libraries(pyfspp PUBLIC
+target_link_libraries(pyfspp PRIVATE
 	FSPP::fspp
 )
 

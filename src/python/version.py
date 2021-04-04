@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-import sys
-sys.path.append('../lib')
-
 import os
 import multiprocessing
 
@@ -10,10 +7,11 @@ import ESL
 import pyfspp
 
 
-class FreeSWITCH(multiprocessing.Process):
-	def run(self):
-		fs = pyfspp.FSPP()
-		fs()
+
+def run_fs(cfg):
+	fs = pyfspp.FSPP(cfg)
+	fs()
+
 
 def get_esl_connection():
 	while True:
@@ -31,9 +29,11 @@ def shutdown_fs(esl_conn):
 
 
 def main():
-	p = FreeSWITCH()
+	cfg = pyfspp.config()
+	p = multiprocessing.Process(target=run_fs, args=(cfg,))
 	print 'Starting FreeSWITCH...'
 	p.start()
+
 	try:
 		print 'Opening ESL connection...'
 		esl_conn = get_esl_connection()
@@ -49,3 +49,6 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
+
+
