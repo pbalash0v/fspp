@@ -35,6 +35,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 #################################
 # Install
 #################################
+#[[
 install(TARGETS ${PROJECT_NAME}
 	LIBRARY
 		DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -44,4 +45,5 @@ install(TARGETS ${PROJECT_NAME}
 		DESTINATION ${CMAKE_INSTALL_LIBDIR}
 		COMPONENT ${PROJECT_NAME}_Dev
 )
+]]
 

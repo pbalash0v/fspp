@@ -9,7 +9,7 @@ set(PYBIND11_FINDPYTHON ON)
 message(STATUS "Standby, pulling pybind11...")
 FetchContent_Declare(pybind
 	GIT_REPOSITORY https://github.com/pybind/pybind11.git
-	GIT_TAG origin/master
+	GIT_TAG v2.6.2 #origin/master
 	GIT_PROGRESS ON
 )
 FetchContent_MakeAvailable(pybind)
@@ -28,7 +28,6 @@ set_target_properties(pyfspp PROPERTIES
 	POSITION_INDEPENDENT_CODE ON
 	ENABLE_EXPORTS ON
 )
-
 target_link_libraries(pyfspp PRIVATE
 	FSPP::fspp
 )
