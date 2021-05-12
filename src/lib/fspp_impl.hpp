@@ -43,6 +43,7 @@ public:
 	lib_impl(lib_impl&&) = default;
 	lib_impl& operator=(lib_impl&&) = default;
 
+	//! Blocks in runtime loop
 	void operator()();
 
 	const fs_cfg& cfg() const noexcept { return fs_cfg_; };

@@ -17,6 +17,9 @@
 */
 
 #include <iostream>
+#include <chrono>
+#include <thread>
+
 #include <boost/throw_exception.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -29,7 +32,7 @@
 namespace
 {
 
-auto on_xml_search = [](const char* section, const char* tag_name, const char* key_name, const char* key_value
+const auto on_xml_search = [](const char* section, const char* tag_name, const char* key_name, const char* key_value
 	, switch_event_t* , void* user_data) -> switch_xml_t
 {
 	auto* self = static_cast<fspp::lib_impl*>(user_data);
@@ -90,7 +93,8 @@ lib_impl::lib_impl(fspp::config cfg)
 	//print_SWITCH_GLOBAL_dirs();
 
 	//
-	switch_core_flag_t flags {SCF_USE_SQL};
+	//switch_core_flag_t flags {SCF_USE_SQL};
+	switch_core_flag_t flags{};
 	const char* err {nullptr};
 
 	if (auto res = ::switch_core_init(flags, cfg.console ? SWITCH_TRUE : SWITCH_FALSE, &err); res != SWITCH_STATUS_SUCCESS)
@@ -104,12 +108,18 @@ lib_impl::lib_impl(fspp::config cfg)
 	{
 		BOOST_THROW_EXCEPTION(std::runtime_error{static_cast<const char*>(err)});
 	}
+
+	// allow all module threads to load and start their runtimes, in particular prevent race in CORE_SOFTTIMER_MODULE shutdown
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
 lib_impl::~lib_impl()
 {
-	[[maybe_unused]] auto destroy_status = ::switch_core_destroy();
-	BOOST_ASSERT(destroy_status == SWITCH_STATUS_SUCCESS);
+	if (auto destroy_status = ::switch_core_destroy(); destroy_status != SWITCH_STATUS_SUCCESS)
+	{
+		std::cerr << "switch_core_destroy failed" << '\n';
+		BOOST_ASSERT(destroy_status == SWITCH_STATUS_SUCCESS);
+	}
 }
 
 // blocks here in console or stdout
@@ -121,7 +131,7 @@ void lib_impl::operator()()
 
 void lib_impl::init_SWITCH_GLOBAL_dirs()
 {
-	auto dup_c_str = [](const auto& str, auto*& dest)
+	const auto dup_c_str = [](const auto& str, auto*& dest)
 	{
 		switch_safe_free(dest);
 

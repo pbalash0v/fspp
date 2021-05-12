@@ -16,14 +16,10 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <gtest/gtest.h>
 #include <fspp.hpp>
 
-
-int main()
+TEST(basic, CreateLib)
 {
-	fspp::config cfg;
-	cfg.console = true;
-
-	fspp::lib fspp{cfg};
-	fspp();
+	fspp::lib{};
 }

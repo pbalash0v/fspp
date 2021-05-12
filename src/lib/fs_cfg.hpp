@@ -59,12 +59,13 @@ struct fs_cfg final
 	static bpt::ptree logfile_conf(const fs_cfg&);
 	static bpt::ptree sofia_conf(const fs_cfg&);
 
-	// User-provided fspp lib config
+	//! User-provided fspp lib config
 	fspp::config cfg_;
-	// RAII create and fill w/ minimal content "freeswitch.xml" file in fspp base_dir
+	//! RAII create and fill w/ minimal content "freeswitch.xml" file in fspp base_dir
 	freeswitch_dot_xml freeswitch_dot_xml_;
-
-	std::unordered_map<std::string, std::function<bpt::ptree(const fs_cfg&)>> config_funcs_ {
+	//! Functions to be called on corresponding FS xml engine callbacks
+	std::unordered_map<std::string, std::function<bpt::ptree(const fs_cfg&)>> config_funcs_
+	{
 		{"modules.conf", &fs_cfg::modules_conf},
 		{"switch.conf", &fs_cfg::switch_conf},
 		{"event_socket.conf", &fs_cfg::event_socket_conf},

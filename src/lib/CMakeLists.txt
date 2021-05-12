@@ -11,19 +11,13 @@ target_sources(${PROJECT_NAME} PRIVATE
 	${PROJECT_NAME}_impl.cpp
 	fs_cfg.cpp
 )
-set_target_properties(${PROJECT_NAME} PROPERTIES
-	CXX_STANDARD 17
-	CXX_STANDARD_REQUIRED ON
-	CXX_EXTENSIONS OFF
-	POSITION_INDEPENDENT_CODE ON
-	ENABLE_EXPORTS ON
-)
 target_include_directories(${PROJECT_NAME} PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 target_compile_options(${PROJECT_NAME} PRIVATE
   $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -pedantic -Werror>
 )
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 target_link_libraries(${PROJECT_NAME} PRIVATE
 	Boost::boost
 	$<BUILD_INTERFACE:fmt::fmt-header-only>	

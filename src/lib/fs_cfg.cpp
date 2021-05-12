@@ -36,7 +36,7 @@ namespace bpt = boost::property_tree;
 namespace
 {
 
-auto name_value_pt = [](auto name, auto val) -> auto
+const auto name_value_pt = [](auto name, auto val) -> auto
 {
 	bpt::ptree param_pt;
 	param_pt.add("<xmlattr>.name", name);
@@ -44,7 +44,7 @@ auto name_value_pt = [](auto name, auto val) -> auto
 	return param_pt;
 };
 
-auto fs_xml_header = [](auto& pt) -> auto&
+const auto fs_xml_header = [](auto& pt) -> auto&
 {
 	auto& header = pt.put("document", "");
 	header.put("<xmlattr>.type", "freeswitch/xml");
@@ -52,7 +52,7 @@ auto fs_xml_header = [](auto& pt) -> auto&
 	return header;
 };
 
-auto conf_section_xml = [](auto& pt) -> auto&
+const auto conf_section_xml = [](auto& pt) -> auto&
 {
 	auto& document = fs_xml_header(pt);
 
@@ -91,14 +91,14 @@ inline std::string to_string(const bpt::ptree& cfg, bool human_readable = false)
 	return oss.str();
 }
 
-bpt::ptree fs_cfg::modules_conf(const fs_cfg&)
+bpt::ptree fs_cfg::modules_conf(const fs_cfg& cfg)
 {
 	bpt::ptree pt;
 
 	auto& conf_section = conf_section_xml(pt);
 
 	//--- configuration -> modules.conf
-	auto modules_ = [](auto& parent_pt)
+	auto modules_ = [&](auto& parent_pt)
 	{
 		bpt::ptree pt_;
 		pt_.add("<xmlattr>.name", "modules.conf");
@@ -106,15 +106,21 @@ bpt::ptree fs_cfg::modules_conf(const fs_cfg&)
 
 		auto& modules = conf_.put("modules", "");
 
-		bpt::ptree mod_console_pt;
-		mod_console_pt.add("<xmlattr>.module", "mod_console");
-		mod_console_pt.add("<xmlattr>.critical", "true");
-		modules.add_child("load", mod_console_pt);
+		if (cfg.cfg_.console)
+		{
+			bpt::ptree mod_console_pt;
+			mod_console_pt.add("<xmlattr>.module", "mod_console");
+			mod_console_pt.add("<xmlattr>.critical", "true");
+			modules.add_child("load", mod_console_pt);
+		}
 
-		bpt::ptree mod_logfile_pt;
-		mod_logfile_pt.add("<xmlattr>.module", "mod_logfile");
-		mod_logfile_pt.add("<xmlattr>.critical", "true");
-		modules.add_child("load", mod_logfile_pt);
+		if (cfg.cfg_.file_log)
+		{
+			bpt::ptree mod_logfile_pt;
+			mod_logfile_pt.add("<xmlattr>.module", "mod_logfile");
+			mod_logfile_pt.add("<xmlattr>.critical", "true");
+			modules.add_child("load", mod_logfile_pt);
+		}
 
 		bpt::ptree mod_event_socket_pt;
 		mod_event_socket_pt.add("<xmlattr>.module", "mod_event_socket");
@@ -131,10 +137,13 @@ bpt::ptree fs_cfg::modules_conf(const fs_cfg&)
 		mod_commands_pt.add("<xmlattr>.critical", "true");
 		modules.add_child("load", mod_commands_pt);
 
-		bpt::ptree mod_sofia_pt;
-		mod_sofia_pt.add("<xmlattr>.module", "mod_sofia");
-		mod_sofia_pt.add("<xmlattr>.critical", "true");
-		modules.add_child("load", mod_sofia_pt);
+		if (cfg.cfg_.sip)
+		{
+			bpt::ptree mod_sofia_pt;
+			mod_sofia_pt.add("<xmlattr>.module", "mod_sofia");
+			mod_sofia_pt.add("<xmlattr>.critical", "true");
+			modules.add_child("load", mod_sofia_pt);
+		}
 
 		return pt_;
 	}(conf_section);

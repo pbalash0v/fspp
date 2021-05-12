@@ -25,7 +25,7 @@ endif()
 add_subdirectory(src)
 
 if(FSPP_BUILD_TESTS)
-	include(pull_Catch2)
+	include(pull_GTest)
 	enable_testing()
 	add_subdirectory(tests)
 	if (FSPP_SANITIZED_TESTS)

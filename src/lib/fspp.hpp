@@ -28,10 +28,15 @@ class lib_impl;
 
 struct config
 {
+	//! should "fake" self symlinks be created (required for python bindings)
 	bool python {false};
 	bool console {false};
-	std::string id{};
-	std::string base_path{};
+	bool file_log {false};
+	//! should mod_sofia be loaded
+	bool sip {false};
+
+	std::string id;
+	std::string base_path;
 };
 
 class lib final
