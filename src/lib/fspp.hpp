@@ -30,10 +30,18 @@ struct config
 {
 	//! should "fake" self symlinks be created (required for python bindings)
 	bool python {false};
+
+	//!
 	bool console {false};
+
+	//!
 	bool file_log {false};
+
 	//! should mod_sofia be loaded
 	bool sip {false};
+
+	//! if set to 0 than will be randomly chosen
+	uint16_t esl_port {8021};
 
 	std::string id;
 	std::string base_path;

@@ -40,8 +40,8 @@ public:
 
 	lib_impl(const lib_impl&) = delete;
 	lib_impl& operator=(const lib_impl&) = delete;
-	lib_impl(lib_impl&&) = default;
-	lib_impl& operator=(lib_impl&&) = default;
+	lib_impl(lib_impl&&) = delete;
+	lib_impl& operator=(lib_impl&&) = delete;
 
 	//! Blocks in runtime loop
 	void operator()();

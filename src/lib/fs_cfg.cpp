@@ -69,7 +69,7 @@ const auto conf_section_xml = [](auto& pt) -> auto&
 namespace fspp
 {
 
-fs_cfg::fs_cfg(fspp::config cfg)
+fs_cfg::fs_cfg(const fspp::config& cfg)
 	: cfg_{cfg}
 	, freeswitch_dot_xml_{cfg}
 {
@@ -229,7 +229,7 @@ bpt::ptree fs_cfg::switch_conf(const fs_cfg&)
 	return pt;
 }
 
-bpt::ptree fs_cfg::event_socket_conf(const fs_cfg&)
+bpt::ptree fs_cfg::event_socket_conf(const fs_cfg& cfg)
 {
 	bpt::ptree pt;
 
@@ -245,7 +245,7 @@ bpt::ptree fs_cfg::event_socket_conf(const fs_cfg&)
 		auto& settings = conf_.put("settings", "");
 		settings.add_child("param", name_value_pt("nat-map", "false"));
 		settings.add_child("param", name_value_pt("listen-ip", "::"));
-		settings.add_child("param", name_value_pt("listen-port", "8021"));
+		settings.add_child("param", name_value_pt("listen-port", std::to_string(cfg.cfg_.esl_port)));
 		settings.add_child("param", name_value_pt("password", "ClueCon"));
 
 		return pt_;

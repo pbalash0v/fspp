@@ -15,6 +15,7 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#include <thread>
 
 #include <gtest/gtest.h>
 #include <fspp.hpp>
@@ -22,4 +23,11 @@
 TEST(basic, CreateLib)
 {
 	fspp::lib{};
+}
+
+TEST(basic, CreateLibRandomESLPort)
+{
+	fspp::config cfg;
+	cfg.esl_port = 0;
+	fspp::lib _ {cfg};
 }

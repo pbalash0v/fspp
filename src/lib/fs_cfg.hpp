@@ -39,7 +39,7 @@ struct config;
 //! Provides config for FreeSWITCH via programmatical xml generation
 struct fs_cfg final
 {
-	fs_cfg(fspp::config);
+	explicit fs_cfg(const fspp::config&);
 
 	//! Filled in switch_xml_bind_search_function provided callback
 	struct conf_tuple
@@ -49,6 +49,7 @@ struct fs_cfg final
 		std::string_view key;
 		std::string_view value;
 	};
+
 	//! Returns generated xml string if requested config section was found
 	std::optional<std::string> operator()(const conf_tuple&) const;
 
@@ -60,9 +61,11 @@ struct fs_cfg final
 	static bpt::ptree sofia_conf(const fs_cfg&);
 
 	//! User-provided fspp lib config
-	fspp::config cfg_;
+	const fspp::config& cfg_;
+
 	//! RAII create and fill w/ minimal content "freeswitch.xml" file in fspp base_dir
 	freeswitch_dot_xml freeswitch_dot_xml_;
+
 	//! Functions to be called on corresponding FS xml engine callbacks
 	std::unordered_map<std::string, std::function<bpt::ptree(const fs_cfg&)>> config_funcs_
 	{

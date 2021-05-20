@@ -19,7 +19,9 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <random>
 
+#include <boost/asio.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -28,6 +30,7 @@
 
 #include "fspp_impl.hpp"
 
+namespace net = boost::asio;
 
 namespace
 {
@@ -54,6 +57,13 @@ const auto on_xml_search = [](const char* section, const char* tag_name, const c
 	}
 };
 
+const auto get_random_port = []()
+{
+		std::random_device rd;     // only used once to initialise (seed) engine
+		std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
+		std::uniform_int_distribution<uint16_t> uni(49152u, std::numeric_limits<std::uint16_t>::max()); // guaranteed unbiased
+		return uni(rng);
+};
 
 fspp::config modify_cfg(fspp::config cfg)
 {
@@ -71,6 +81,27 @@ fspp::config modify_cfg(fspp::config cfg)
 	return cfg;
 }
 
+[[nodiscard]] std::pair<net::ip::tcp::socket, net::ip::tcp::socket> adjust_esl_port(fspp::config& cfg)
+{
+	// Randomly assign ESL port
+	if (cfg.esl_port == 0)
+	{
+		cfg.esl_port = get_random_port();
+	}
+
+	static net::io_context m_io_ctx;
+
+	net::ip::tcp::socket esl_socket_v4 {m_io_ctx, boost::asio::ip::tcp::v4()};
+	esl_socket_v4.set_option(boost::asio::ip::tcp::socket::reuse_address(true));
+	esl_socket_v4.bind(net::ip::tcp::endpoint {net::ip::tcp::v4(), cfg.esl_port});
+
+	net::ip::tcp::socket esl_socket_v6 {m_io_ctx, boost::asio::ip::tcp::v6()};
+	esl_socket_v6.set_option(boost::asio::ip::tcp::socket::reuse_address(true));
+	esl_socket_v6.bind(net::ip::tcp::endpoint {net::ip::tcp::v6(), cfg.esl_port});
+
+	return std::pair{std::move(esl_socket_v4), std::move(esl_socket_v6)};
+};
+
 }
 
 
@@ -83,6 +114,8 @@ lib_impl::lib_impl(fspp::config cfg)
 	, fs_modules_{cfg_}
 	, fs_cfg_{cfg_}
 {
+	auto _ = adjust_esl_port(cfg_);
+
 	// loads internal SWITCH_GLOBAL_dirs struct of char* with autoconf generated values (?)
 	::switch_core_set_globals();
 
