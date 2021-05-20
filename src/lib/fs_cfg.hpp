@@ -34,7 +34,7 @@ namespace bpt = boost::property_tree;
 
 namespace fspp
 {
-struct config;
+struct config; //forward decl
 
 //! Provides config for FreeSWITCH via programmatical xml generation
 struct fs_cfg final

@@ -24,7 +24,7 @@
 
 namespace fspp
 {
-class lib_impl;
+class lib_impl;  //forward decl
 
 struct config
 {
@@ -47,6 +47,7 @@ struct config
 	std::string base_path;
 };
 
+
 class lib final
 {
 public:
@@ -58,6 +59,7 @@ public:
 	lib(lib&&) = default;
 	lib& operator=(lib&&) = default;
 
+public:
 	void operator()();
 
 private:

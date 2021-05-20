@@ -66,7 +66,7 @@ const auto get_random_port = []()
 	return uni(rng);
 };
 
-fspp::config modify_cfg(fspp::config cfg)
+[[nodiscard]] fspp::config modify_cfg(fspp::config cfg)
 {
 	constexpr auto* fspp_dir_ {"fspp"};
 	static fs::path fspp_def_base {fs::temp_directory_path() / fspp_dir_}; // usually results in "/tmp/fspp"
@@ -159,8 +159,7 @@ lib_impl::~lib_impl()
 // blocks here in console or stdout
 void lib_impl::operator()()
 {
-	auto background {true};
-	::switch_core_runtime_loop(background);
+	::switch_core_runtime_loop(not cfg_.console);
 }
 
 void lib_impl::init_SWITCH_GLOBAL_dirs()

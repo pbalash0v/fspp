@@ -43,19 +43,24 @@ public:
 	lib_impl(lib_impl&&) = delete;
 	lib_impl& operator=(lib_impl&&) = delete;
 
-	//! Blocks in runtime loop
+public:
+	//! Blocks in FS's runtime loop
 	void operator()();
 
 	const fs_cfg& cfg() const noexcept { return fs_cfg_; };
 
 private:
-	//! User-provided fspp lib config
+	//! User-provided fspp lib's own config
 	fspp::config cfg_;
+
 	//! RAII create/delete this instance's specific directories
 	fspp::dirs dirs_;
-	//! Make sure all C symbols from stat lib are present
-	fs_modules fs_modules_;
-	fs_cfg fs_cfg_;
+
+	//! Makes sure all C symbols from static libs are included by linker
+	fspp::fs_modules fs_modules_;
+
+	//! FreeSWITCH's native config
+	fspp::fs_cfg fs_cfg_;
 
 private:
 	void init_SWITCH_GLOBAL_dirs();

@@ -1,8 +1,13 @@
 ---
-Checks:          '*,-fuchsia-*,-google-*,-zircon-*,-abseil-*,-modernize-use-trailing-return-type,-llvm*
-					,-readability-named-parameter,-hicpp-uppercase-literal-suffix,-readability-uppercase-literal-suffix'
-WarningsAsErrors: '*'
-HeaderFilterRegex: ''
+Checks:          '*,
+                  -llvm-*,-llvmlibc-*,
+                  -fuchsia-*,-google-*,-zircon-*,-abseil-*,
+                  -altera-struct-pack-align,
+                  -modernize-use-trailing-return-type,
+                  -hicpp-uppercase-literal-suffix,
+                  -readability-named-parameter,-readability-uppercase-literal-suffix,-readability-redundant-access-specifiers'
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*'
 FormatStyle:     none
 
 
