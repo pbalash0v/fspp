@@ -59,10 +59,11 @@ const auto on_xml_search = [](const char* section, const char* tag_name, const c
 
 const auto get_random_port = []()
 {
-		std::random_device rd;     // only used once to initialise (seed) engine
-		std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
-		std::uniform_int_distribution<uint16_t> uni(49152u, std::numeric_limits<std::uint16_t>::max()); // guaranteed unbiased
-		return uni(rng);
+	static std::random_device rd;     // only used once to initialise (seed) engine
+	static std::mt19937 rng {rd()};    // random-number engine used (Mersenne-Twister in this case)
+	static std::uniform_int_distribution<uint16_t> uni {49152u, std::numeric_limits<std::uint16_t>::max()}; // guaranteed unbiased
+
+	return uni(rng);
 };
 
 fspp::config modify_cfg(fspp::config cfg)
@@ -91,16 +92,16 @@ fspp::config modify_cfg(fspp::config cfg)
 
 	static net::io_context m_io_ctx;
 
-	net::ip::tcp::socket esl_socket_v4 {m_io_ctx, boost::asio::ip::tcp::v4()};
-	esl_socket_v4.set_option(boost::asio::ip::tcp::socket::reuse_address(true));
+	net::ip::tcp::socket esl_socket_v4 {m_io_ctx, net::ip::tcp::v4()};
+	esl_socket_v4.set_option(net::ip::tcp::socket::reuse_address(true));
 	esl_socket_v4.bind(net::ip::tcp::endpoint {net::ip::tcp::v4(), cfg.esl_port});
 
 	net::ip::tcp::socket esl_socket_v6 {m_io_ctx, boost::asio::ip::tcp::v6()};
-	esl_socket_v6.set_option(boost::asio::ip::tcp::socket::reuse_address(true));
+	esl_socket_v6.set_option(net::ip::tcp::socket::reuse_address(true));
 	esl_socket_v6.bind(net::ip::tcp::endpoint {net::ip::tcp::v6(), cfg.esl_port});
 
 	return std::pair{std::move(esl_socket_v4), std::move(esl_socket_v6)};
-};
+}
 
 }
 

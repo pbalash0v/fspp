@@ -41,26 +41,24 @@ set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS_POLICY ">=")
 set(CPACK_DEB_COMPONENT_INSTALL ON)
 
 # set inter component dependencies if listed with CPACK_COMPONENT_<compName>_DEPENDS variables
-set(CPACK_DEBIAN_ENABLE_COMPONENT_DEPENDS ON)
+set(CPACK_DEBIAN_ENABLE_COMPONENT_DEPENDS OFF)
 
 #
 # Package and file naming (by component)
 #
-string(TOUPPER ${PROJECT_NAME}_Dev ${PROJECT_NAME}_Dev_uppercased)
 string(REPLACE "_" "-" THIS_PACKAGE_NAME_PART ${PROJECT_NAME})
 
+string(TOUPPER ${PROJECT_NAME}_Dev ${PROJECT_NAME}_Dev_uppercased)
 set(CPACK_DEBIAN_${${PROJECT_NAME}_Dev_uppercased}_PACKAGE_NAME ${THIS_PACKAGE_NAME_PART}-dev)
 set(CPACK_DEBIAN_${${PROJECT_NAME}_Dev_uppercased}_FILE_NAME DEB-DEFAULT)
-
 
 string(TOUPPER ${PROJECT_NAME}_Runtime ${PROJECT_NAME}_Runtime_uppercased)
 set(CPACK_DEBIAN_${${PROJECT_NAME}_Runtime_uppercased}_PACKAGE_NAME ${THIS_PACKAGE_NAME_PART})
 set(CPACK_DEBIAN_${${PROJECT_NAME}_Runtime_uppercased}_FILE_NAME DEB-DEFAULT)
 
 
-
 #set(CPACK_DEBIAN_${${PROJECT_NAME}_Dev_uppercased}_PACKAGE_DEPENDS "libprotobuf-dev (>=3.6.1)")
-set(CPACK_COMPONENT_${${PROJECT_NAME}_Dev_uppercased}_DEPENDS ${${PROJECT_NAME}_Runtime_uppercased})
+#set(CPACK_COMPONENT_${${PROJECT_NAME}_Dev_uppercased}_DEPENDS ${${PROJECT_NAME}_Runtime_uppercased})
 
 # At this point where the CPack module is included,
 # the CPackConfig.cmake file is written to the top of the build tree

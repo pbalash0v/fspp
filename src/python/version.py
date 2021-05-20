@@ -13,9 +13,9 @@ def run_fs(cfg):
 	fs()
 
 
-def get_esl_connection():
+def get_esl_connection(cfg):
 	while True:
-		con = ESL.ESLconnection("::1", 8021, "ClueCon")
+		con = ESL.ESLconnection("::1", cfg.esl_port, "ClueCon")
 		if con.connected():
 			return con
 
@@ -33,13 +33,12 @@ def main():
 	p = multiprocessing.Process(target=run_fs, args=(cfg,))
 	print 'Starting FreeSWITCH...'
 	p.start()
-
+	
 	try:
-		print 'Opening ESL connection...'
-		esl_conn = get_esl_connection()
+		print 'Opening ESL connection on {}...'.format(cfg.esl_port)
+		esl_conn = get_esl_connection(cfg)
 		print 'ESL connected'
-		fs_version = get_fs_version(esl_conn)
-		print fs_version
+		print get_fs_version(esl_conn)
 		print 'Shutting down FreeSWITCH...'
 		shutdown_fs(esl_conn)
 		p.join()

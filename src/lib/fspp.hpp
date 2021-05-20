@@ -31,7 +31,7 @@ struct config
 	//! should "fake" self symlinks be created (required for python bindings)
 	bool python {false};
 
-	//!
+	//! should stdout console output be enabled
 	bool console {false};
 
 	//!
